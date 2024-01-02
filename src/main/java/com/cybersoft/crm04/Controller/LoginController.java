@@ -95,8 +95,6 @@ public class LoginController {
         if(listUser.size()>0){
             // có giá trị => đăng nhập thành công
 
-//            httpSession.setAttribute("email",email);
-//            httpSession.setMaxInactiveInterval(8 * 60 * 60);
 
             if(remember){
                 Cookie saveEmail = new Cookie("email", email);
