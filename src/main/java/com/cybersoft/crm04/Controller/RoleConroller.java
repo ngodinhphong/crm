@@ -32,7 +32,7 @@ public class RoleConroller {
      *  - Thêm mới : khóa chính của class entity truyền vào hàm save() không có giá trị khóa chính
      *  - cập nhật : khóa chính của class entity truyền vào hàm save() có giá trị
      *
-     * @return
+     *
      */
 
     @GetMapping("/add")

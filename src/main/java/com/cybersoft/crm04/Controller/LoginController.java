@@ -2,6 +2,10 @@ package com.cybersoft.crm04.Controller;
 
 import com.cybersoft.crm04.entity.UsersEntity;
 import com.cybersoft.crm04.repository.UsersRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
@@ -31,7 +37,28 @@ public class LoginController {
     private UsersRepository usersRepository;
 
     @GetMapping ("")
-    public String login(){
+    public String login( HttpServletRequest request, Model model){
+        String email = "";
+        String password = "";
+        Cookie[] cookies = request.getCookies();
+
+        for(Cookie cookei : cookies) {
+
+            if(cookei.getName().equals("email")){
+                email = cookei.getValue();
+
+            } else if (cookei.getName().equals("password")) {
+                password = cookei.getValue();
+
+            }
+        }
+        model.addAttribute("email", email);
+        model.addAttribute("password", password);
+
+
+
+
+
         List<UsersEntity> list = usersRepository.findByEmailAndPassword("Nguyevana@gmail.com", "123456");
         for(UsersEntity item : list){
             System.out.println("Kiemtra: " + item.getEmail());
@@ -43,7 +70,7 @@ public class LoginController {
     //View : Chính là file html
 
     @PostMapping("")
-    public String progressLogin(@RequestParam String email, @RequestParam String password,Model model){
+    public String progressLogin(HttpSession httpSession, @RequestParam String email, @RequestParam String password, Model model, HttpServletResponse response, @RequestParam(value = "remember", defaultValue = "false") boolean remember){
 
 
         /**
@@ -64,8 +91,22 @@ public class LoginController {
         List<UsersEntity> listUser = usersRepository.findByEmailAndPassword(email, password);
 
 
+
         if(listUser.size()>0){
             // có giá trị => đăng nhập thành công
+
+//            httpSession.setAttribute("email",email);
+//            httpSession.setMaxInactiveInterval(8 * 60 * 60);
+
+            if(remember){
+                Cookie saveEmail = new Cookie("email", email);
+                response.addCookie(saveEmail);
+
+                Cookie savePassword = new Cookie("password", password);
+                response.addCookie(savePassword);
+            }
+
+
             return "redirect:/index";
 
         }else {
@@ -77,6 +118,11 @@ public class LoginController {
             return "login";
 
         }
+
+        /**
+         * Khi đăng nhập thành công thì lưu email và mật khẩu va cookie
+         * Khi người dùng vô lại link/login thì sẻ điền sẵng email và mật khẩu vào input
+         */
 
     }
 
