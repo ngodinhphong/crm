@@ -1,6 +1,8 @@
 package com.cybersoft.crm04.Controller;
 
+import com.cybersoft.crm04.entity.RolesEntity;
 import com.cybersoft.crm04.entity.UsersEntity;
+import com.cybersoft.crm04.repository.RolesRepository;
 import com.cybersoft.crm04.repository.UsersRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +38,7 @@ public class LoginController {
     @Autowired
     private UsersRepository usersRepository;
 
+
     @GetMapping ("")
     public String login( HttpServletRequest request, Model model){
         String email = "";
@@ -59,10 +62,10 @@ public class LoginController {
 
 
 
-        List<UsersEntity> list = usersRepository.findByEmailAndPassword("Nguyevana@gmail.com", "123456");
-        for(UsersEntity item : list){
-            System.out.println("Kiemtra: " + item.getEmail());
-        }
+//        List<UsersEntity> list = usersRepository.findByEmailAndPassword("Nguyevana@gmail.com", "123456");
+//        for(UsersEntity item : list){
+//            System.out.println("Kiemtra: " + item.getEmail());
+//        }
         return "login";
     }
     //Controler: nơi định nghĩa link
@@ -71,7 +74,6 @@ public class LoginController {
 
     @PostMapping("")
     public String progressLogin(HttpSession httpSession, @RequestParam String email, @RequestParam String password, Model model, HttpServletResponse response, @RequestParam(value = "remember", defaultValue = "false") boolean remember){
-
 
         /**
          * Hoàn thiện chức năng login
@@ -89,20 +91,31 @@ public class LoginController {
          */
 
         List<UsersEntity> listUser = usersRepository.findByEmailAndPassword(email, password);
-
-
+        String roleName = "";
+        for (int i=0; i< listUser.size(); i++){
+            if(listUser.get(i).getEmail().equals(email)){
+                roleName = listUser.get(i).getRolesEntity().getName();
+                break;
+            }
+        }
 
         if(listUser.size()>0){
             // có giá trị => đăng nhập thành công
 
 
-            if(remember){
-                Cookie saveEmail = new Cookie("email", email);
-                response.addCookie(saveEmail);
+            httpSession.setAttribute("email",email);
+            httpSession.setMaxInactiveInterval(8 * 60 * 60);
 
-                Cookie savePassword = new Cookie("password", password);
-                response.addCookie(savePassword);
-            }
+            httpSession.setAttribute("roleName",roleName);
+            httpSession.setMaxInactiveInterval(8 * 60 * 60);
+
+//            if(remember){
+//                Cookie saveEmail = new Cookie("email", email);
+//                response.addCookie(saveEmail);
+//
+//                Cookie savePassword = new Cookie("password", password);
+//                response.addCookie(savePassword);
+//            }
 
 
             return "redirect:/index";

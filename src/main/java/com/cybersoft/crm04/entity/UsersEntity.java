@@ -46,6 +46,14 @@ public class UsersEntity {
     @JoinColumn(name = "role_id") // tên cột khóa ngoại trong database dùng để liên kết dữ liệu
     private RolesEntity rolesEntity; // Dựa vào chữ đằng sau OneToMany hay ManytoOne thì sẻ biết được là một đối tượng hay một list đối tượng
 
+    public RolesEntity getRolesEntity() {
+        return rolesEntity;
+    }
+
+    public void setRolesEntity(RolesEntity rolesEntity) {
+        this.rolesEntity = rolesEntity;
+    }
+
     public int getId() {
         return id;
     }
@@ -86,11 +94,5 @@ public class UsersEntity {
         this.avatar = avatar;
     }
 
-    public RolesEntity getRolesEntity() {
-        return rolesEntity;
-    }
 
-    public void setRolesEntity(RolesEntity rolesEntity) {
-        this.rolesEntity = rolesEntity;
-    }
 }
