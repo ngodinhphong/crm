@@ -121,7 +121,7 @@
             <div class="container-fluid">
                 <div class="row bg-title">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Thêm mới quyền</h4>
+                        <h4 class="page-title">Cập nhật quyền</h4>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -131,23 +131,23 @@
                     <div class="col-md-8 col-xs-12">
                         <h4 th:text="${notification}" style="color: red"></h4>
                         <div class="white-box">
-                            <form th:action="@{/role/add}" method="post" class="form-horizontal form-material">
+                            <form th:action="@{/role/edit/{id}(id = ${listRole.id})}" method="post" class="form-horizontal form-material">
                                 <div class="form-group">
-                                    <label class="col-md-12">Tên quyền</label>
+                                    <label class="col-md-12" >Tên quyền</label>
                                     <div class="col-md-12">
-                                        <input name="roleName" type="text" placeholder="Tên quyền"
-                                            class="form-control form-control-line" />
+                                        <input name="name" type="text" placeholder="Tên quyền"
+                                            class="form-control form-control-line" th:value="${roleEntity.name}"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Mô tả</label>
                                     <div class="col-md-12">
-                                        <input name="desc" type="text" placeholder="Mô tả" class="form-control form-control-line" />
+                                        <input name="description" th:value="${roleEntity.description}" type="text" placeholder="Mô tả" class="form-control form-control-line" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <button type="submit" class="btn btn-success">Add Role</button>
+                                        <button type="submit"  class="btn btn-success">Edit Role</button>
                                         <a th:href="@{/role/show}" class="btn btn-primary">Quay lại</a>
                                     </div>
                                 </div>

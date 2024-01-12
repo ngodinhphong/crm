@@ -1,10 +1,7 @@
 package com.cybersoft.crm04.Controller;
 
-import com.cybersoft.crm04.entity.RolesEntity;
+import com.cybersoft.crm04.Services.LoginService;
 import com.cybersoft.crm04.entity.UsersEntity;
-import com.cybersoft.crm04.repository.RolesRepository;
-import com.cybersoft.crm04.repository.UsersRepository;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -31,110 +28,33 @@ import java.util.List;
  *
  */
 
+//Controler: nơi định nghĩa link
+// Model : cho phép trả giá trị từ java ra file HTML (view)
+//View : Chính là file html
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
 
     @Autowired
-    private UsersRepository usersRepository;
-
+    private LoginService loginService;
 
     @GetMapping ("")
     public String login( HttpServletRequest request, Model model){
-        String email = "";
-        String password = "";
-        Cookie[] cookies = request.getCookies();
+        String email = loginService.saveEmail(request);
+        String password = loginService.savePassword(request);
 
-        for(Cookie cookei : cookies) {
-
-            if(cookei.getName().equals("email")){
-                email = cookei.getValue();
-
-            } else if (cookei.getName().equals("password")) {
-                password = cookei.getValue();
-
-            }
-        }
         model.addAttribute("email", email);
         model.addAttribute("password", password);
 
-
-
-
-
-//        List<UsersEntity> list = usersRepository.findByEmailAndPassword("Nguyevana@gmail.com", "123456");
-//        for(UsersEntity item : list){
-//            System.out.println("Kiemtra: " + item.getEmail());
-//        }
         return "login";
     }
-    //Controler: nơi định nghĩa link
-    // Model : cho phép trả giá trị từ java ra file HTML (view)
-    //View : Chính là file html
 
     @PostMapping("")
-    public String progressLogin(HttpSession httpSession, @RequestParam String email, @RequestParam String password, Model model, HttpServletResponse response, @RequestParam(value = "remember", defaultValue = "false") boolean remember){
-
-        /**
-         * Hoàn thiện chức năng login
-         * Bước 1: Thế tham số người dùng truyền vào hàm findByEmailAndPassword
-         * Bước 2: Kiểm tra xem list có dữ liệu hay không ?
-         *  * làm cách nào nhận được tham số?
-         *  * làm cách nào có thể gọi được link/login với phương thức post
-         *  * làm cách nào để truyền email và password?
-         * Bước 3: Nếu có thì trả ra chuyên qua dashboard(lưu tạo link/ dashboard sử dụng page index.html)
-         * Bước 4: Nếu thât bại thì xuất thông báo " Đăng nhập thất bại" ra màng hình login
-         *  * làm cách nào để trả giá trị biến ra htlm?
-         *  * làm cácnh nào để
-         * *Lưu ý: phương thức post=> Chỉnh form data bên giao diện login
-         *
-         */
-
-        List<UsersEntity> listUser = usersRepository.findByEmailAndPassword(email, password);
-        String roleName = "";
-        for (int i=0; i< listUser.size(); i++){
-            if(listUser.get(i).getEmail().equals(email)){
-                roleName = listUser.get(i).getRolesEntity().getName();
-                break;
-            }
-        }
-
-        if(listUser.size()>0){
-            // có giá trị => đăng nhập thành công
+    public String progressLogin(HttpSession httpSession, @RequestParam String email, @RequestParam String password, Model model, HttpServletResponse response, @RequestParam(value = "remember", defaultValue = "false") boolean remembers){
 
 
-            httpSession.setAttribute("email",email);
-            httpSession.setMaxInactiveInterval(8 * 60 * 60);
-
-            httpSession.setAttribute("roleName",roleName);
-            httpSession.setMaxInactiveInterval(8 * 60 * 60);
-
-//            if(remember){
-//                Cookie saveEmail = new Cookie("email", email);
-//                response.addCookie(saveEmail);
-//
-//                Cookie savePassword = new Cookie("password", password);
-//                response.addCookie(savePassword);
-//            }
-
-
-            return "redirect:/index";
-
-        }else {
-            // Không có giá trị => đăng nhập thất bại
-
-            // Đẩy giá trị iSuccess ra file html và đặt tên key ( biến) là isSuccess
-            model.addAttribute("error", "Login failed");
-
-            return "login";
-
-        }
-
-        /**
-         * Khi đăng nhập thành công thì lưu email và mật khẩu va cookie
-         * Khi người dùng vô lại link/login thì sẻ điền sẵng email và mật khẩu vào input
-         */
-
+        return loginService.performLogin(httpSession, email, password, model, response, remembers);
     }
 
 }

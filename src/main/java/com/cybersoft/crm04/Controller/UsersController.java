@@ -5,11 +5,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("404")
-public class notFoundController {
-    @GetMapping("")
-    public String notFound(){
+@RequestMapping("/user")
+public class UsersController {
 
-        return "404";
+    @GetMapping("")
+    public String userTable(){
+
+        return "user-table";
     }
+
+    @GetMapping("/add")
+    public String userTableAdd(){
+
+        return "user-add";
+    }
+
 }
