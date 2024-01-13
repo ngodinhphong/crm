@@ -58,7 +58,7 @@ public class RoleConroller {
         return "role-table";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String removeRole(@PathVariable int id){
         roleService.deleteRole(id);
 
@@ -74,13 +74,16 @@ public class RoleConroller {
     }
 
     @PostMapping("/edit/{id}")
-    public String progressRole(@PathVariable int id, @PathVariable String name, @PathVariable String decription){
-    RolesEntity rolesEntity = new RolesEntity();
-    rolesEntity.setId(id);
-    rolesEntity.setName(name);
-    rolesEntity.setDescription(decription);
+    public String progressRole(@PathVariable int id, @RequestParam String roleName, @RequestParam String desc, Model model){
 
-    roleService.updateRole(rolesEntity);
+        RolesEntity rolesEntity = new RolesEntity();
+        rolesEntity.setId(id);
+        rolesEntity.setName(roleName);
+        rolesEntity.setDescription(desc);
+
+        roleService.updateRole(rolesEntity);
+
+        model.addAttribute("roleEntity", rolesEntity);
 
         return "role-edit";
     }

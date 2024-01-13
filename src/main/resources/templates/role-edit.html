@@ -131,18 +131,19 @@
                     <div class="col-md-8 col-xs-12">
                         <h4 th:text="${notification}" style="color: red"></h4>
                         <div class="white-box">
-                            <form th:action="@{/role/edit/{id}(id = ${listRole.id})}" method="post" class="form-horizontal form-material">
+                            <form th:action="@{/role/edit/{id}(id = ${roleEntity.id})}" method="post" class="form-horizontal form-material">
                                 <div class="form-group">
                                     <label class="col-md-12" >Tên quyền</label>
                                     <div class="col-md-12">
-                                        <input name="name" type="text" placeholder="Tên quyền"
+                                        <input name="roleName" type="text" placeholder="Tên quyền"
                                             class="form-control form-control-line" th:value="${roleEntity.name}"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Mô tả</label>
                                     <div class="col-md-12">
-                                        <input name="description" th:value="${roleEntity.description}" type="text" placeholder="Mô tả" class="form-control form-control-line" />
+                                        <input name="desc" type="text" placeholder="Mô tả"
+                                               class="form-control form-control-line" th:value="${roleEntity.description}" />
                                     </div>
                                 </div>
                                 <div class="form-group">

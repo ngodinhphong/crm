@@ -107,5 +107,9 @@ public class UsersEntity {
         this.avatar = avatar;
     }
 
+    public String getFirstName(String fullname){
+        String firstName = "";
 
+        return firstName;
+    }
 }

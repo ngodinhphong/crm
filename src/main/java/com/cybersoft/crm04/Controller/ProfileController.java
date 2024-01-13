@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("404")
-public class NotFoundController {
+@RequestMapping("profile")
+public class ProfileController {
 
     @GetMapping("")
-    public String notFound(){
+    public String designate(){
 
-        return "404";
+        return "profile";
     }
 }
