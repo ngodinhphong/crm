@@ -132,53 +132,60 @@
                 <div class="row">
                     <div class="col-md-2 col-12"></div>
                     <div class="col-md-8 col-xs-12">
+                        <h3 th:if="${checckIsSuccess}" style="color: red"> Thêm thành công, quay lại để xem chi tiết</h3>
+                        <h3 th:if="${checkConditionnal == false}" style="color: red"> Công việc đã được user đảm nhận, vui lòng xem lại</h3>
+                        <h3 th:if="${checkConditionsDate == false}" style="color: red"> Ngày của công việc phải nằm trong khoảng ngày của dự án! </h3>
                         <div class="white-box">
-                            <form class="form-horizontal form-material">
+                            <form class="form-horizontal form-material" th:action="@{/task/add}" method="post">
                                 <div class="form-group">
                                     <label class="col-md-12">Dự án</label>
                                     <div class="col-md-12">
-                                        <select class="form-control form-control-line">
-                                            <option>Dự án CRM</option>
-                                            <option>Dự án Elearning</option>
-                                            <option>Dự án Rạp chiếu phim</option>
+                                        <select class="form-control form-control-line" name="idJob">
+                                            <option th:each="jobs : ${job}" th:value="${jobs.id}" th:text="${jobs.name}"></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Tên công việc</label>
                                     <div class="col-md-12">
-                                        <input type="text" placeholder="Tên công việc"
+                                        <input type="text" placeholder="Tên công việc" name="nameTask" th:value="${nameTask}"
                                             class="form-control form-control-line">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Người thực hiện</label>
                                     <div class="col-md-12">
-                                        <select class="form-control form-control-line">
-                                            <option>Nguyễn Văn Tèo</option>
-                                            <option>Trần Thị Lan</option>
-                                            <option>Cao Ngọc Hiếu</option>
+                                        <select class="form-control form-control-line" name="idUser">
+                                            <option th:each="users : ${user}" th:value="${users.id}" th:text="${users.fullName}"></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Ngày bắt đầu</label>
                                     <div class="col-md-12">
-                                        <input type="text" placeholder="dd/MM/yyyy"
+                                        <input type="text" placeholder="dd/MM/yyyy" name="startDate" th:value="${startDate}"
                                             class="form-control form-control-line"> 
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Ngày kết thúc</label>
                                     <div class="col-md-12">
-                                        <input type="text" placeholder="dd/MM/yyyy"
+                                        <input type="text" placeholder="dd/MM/yyyy" name="endDate" th:value="${endDate}"
                                             class="form-control form-control-line"> 
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Tình trạng thực hiện</label>
+                                    <div class="col-md-12">
+                                        <select class="form-control form-control-line" name="idStatus">
+                                            <option th:each="statusEntities : ${statusEntitie}" th:value="${statusEntities.id}" th:text="${statusEntities.getName()}"></option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <button type="submit" class="btn btn-success">Lưu lại</button>
-                                        <a href="task.html" class="btn btn-primary">Quay lại</a>
+                                        <a th:href="@{/task/show}" class="btn btn-primary">Quay lại</a>
                                     </div>
                                 </div>
                             </form>

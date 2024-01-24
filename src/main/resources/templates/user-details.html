@@ -135,8 +135,8 @@
                                     <div class="user-content">
                                         <a href="javascript:void(0)"><img src="plugins/images/users/genu.jpg"
                                                 class="thumb-lg img-circle" alt="img"></a>
-                                        <h4 class="text-white">Nguyễn Văn Tèo</h4>
-                                        <h5 class="text-white">info.teo@gmail.com</h5>
+                                        <h4 class="text-white" th:text="${usersEntity.fullName}" ></h4>
+                                        <h5 class="text-white" th:text="${'info.' + usersEntity.email}" ></h5>
                                     </div>
                                 </div>
                             </div>
@@ -225,22 +225,26 @@
                         <div class="white-box">
                             <h3 class="box-title">Chưa thực hiện</h3>
                             <div class="message-center">
-                                <a href="#">
-                                    <div class="mail-contnet">
-                                        <h5>Phân tích hệ thống</h5>
-                                        <span class="mail-desc"></span>
-                                        <span class="time">Bắt đầu: 05/07/2020</span>
-                                        <span class="time">Kết thúc: 17/07/2020</span>
-                                    </div>
-                                </a> 
-                                <a href="#">
-                                    <div class="mail-contnet">
-                                        <h5>Thiết kế database</h5>
-                                        <span class="mail-desc"></span>
-                                        <span class="time">Bắt đầu: 05/07/2020</span>
-                                        <span class="time">Kết thúc: 17/07/2020</span>
-                                    </div>
-                                </a>
+                                <tr th:each="taskUnfulfilled : ${unfulfilled}" >
+                                    <td >
+                                        <a href="#">
+                                            <div class="mail-contnet">
+                                                <h5 th:text="${taskUnfulfilled.getName()}" ></h5>
+                                                <span class="mail-desc"></span>
+                                                    <span class="time" th:text="${'Bắt đầu: ' + taskUnfulfilled.formatDate(taskUnfulfilled.startDate)}"></span>
+                                                    <span class="time" th:text="${'Kết thúc: ' + taskUnfulfilled.formatDate(taskUnfulfilled.endDate)}"></span>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+<!--                                <a href="#">-->
+<!--                                    <div class="mail-contnet">-->
+<!--                                        <h5>Thiết kế database</h5>-->
+<!--                                        <span class="mail-desc"></span>-->
+<!--                                        <span class="time">Bắt đầu: 05/07/2020</span>-->
+<!--                                        <span class="time">Kết thúc: 17/07/2020</span>-->
+<!--                                    </div>-->
+<!--                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -248,22 +252,34 @@
                         <div class="white-box">
                             <h3 class="box-title">Đang thực hiện</h3>
                             <div class="message-center">
-                                <a href="#">
-                                    <div class="mail-contnet">
-                                        <h5>Phân tích hệ thống</h5>
-                                        <span class="mail-desc"></span>
-                                        <span class="time">Bắt đầu: 05/07/2020</span>
-                                        <span class="time">Kết thúc: 17/07/2020</span>
-                                    </div>
-                                </a> 
-                                <a href="#">
-                                    <div class="mail-contnet">
-                                        <h5>Thiết kế database</h5>
-                                        <span class="mail-desc"></span>
-                                        <span class="time">Bắt đầu: 05/07/2020</span>
-                                        <span class="time">Kết thúc: 17/07/2020</span>
-                                    </div>
-                                </a>
+                                <tr th:each="taskProcessing : ${processing}" >
+                                    <td >
+                                        <a href="#">
+                                            <div class="mail-contnet">
+                                                <h5 th:text="${taskProcessing.getName()}" ></h5>
+                                                <span class="mail-desc"></span>
+                                                <span class="time" th:text="${'Bắt đầu: ' + taskProcessing.formatDate(taskProcessing.startDate)}"></span>
+                                                <span class="time" th:text="${'Kết thúc: ' + taskProcessing.formatDate(taskProcessing.endDate)}"></span>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+<!--                                <a href="#">-->
+<!--                                    <div class="mail-contnet">-->
+<!--                                        <h5>Phân tích hệ thống</h5>-->
+<!--                                        <span class="mail-desc"></span>-->
+<!--                                        <span class="time">Bắt đầu: 05/07/2020</span>-->
+<!--                                        <span class="time">Kết thúc: 17/07/2020</span>-->
+<!--                                    </div>-->
+<!--                                </a> -->
+<!--                                <a href="#">-->
+<!--                                    <div class="mail-contnet">-->
+<!--                                        <h5>Thiết kế database</h5>-->
+<!--                                        <span class="mail-desc"></span>-->
+<!--                                        <span class="time">Bắt đầu: 05/07/2020</span>-->
+<!--                                        <span class="time">Kết thúc: 17/07/2020</span>-->
+<!--                                    </div>-->
+<!--                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -271,22 +287,34 @@
                         <div class="white-box">
                             <h3 class="box-title">Đã hoàn thành</h3>
                             <div class="message-center">
-                                <a href="#">
-                                    <div class="mail-contnet">
-                                        <h5>Phân tích hệ thống</h5>
-                                        <span class="mail-desc"></span>
-                                        <span class="time">Bắt đầu: 05/07/2020</span>
-                                        <span class="time">Kết thúc: 17/07/2020</span>
-                                    </div>
-                                </a> 
-                                <a href="#">
-                                    <div class="mail-contnet">
-                                        <h5>Thiết kế database</h5>
-                                        <span class="mail-desc"></span>
-                                        <span class="time">Bắt đầu: 05/07/2020</span>
-                                        <span class="time">Kết thúc: 17/07/2020</span>
-                                    </div>
-                                </a>
+                                <tr th:each="taskMade : ${made}" >
+                                    <td >
+                                        <a href="#">
+                                            <div class="mail-contnet">
+                                                <h5 th:text="${taskMade.name}" ></h5>
+                                                <span class="mail-desc"></span>
+                                                <span class="time" th:text="${'Bắt đầu: ' + taskMade.formatDate(taskMade.startDate)}"></span>
+                                                <span class="time" th:text="${'Kết thúc: ' + taskMade.formatDate(taskMade.endDate)}"></span>
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+<!--                                <a href="#">-->
+<!--                                    <div class="mail-contnet">-->
+<!--                                        <h5>Phân tích hệ thống</h5>-->
+<!--                                        <span class="mail-desc"></span>-->
+<!--                                        <span class="time">Bắt đầu: 05/07/2020</span>-->
+<!--                                        <span class="time">Kết thúc: 17/07/2020</span>-->
+<!--                                    </div>-->
+<!--                                </a> -->
+<!--                                <a href="#">-->
+<!--                                    <div class="mail-contnet">-->
+<!--                                        <h5>Thiết kế database</h5>-->
+<!--                                        <span class="mail-desc"></span>-->
+<!--                                        <span class="time">Bắt đầu: 05/07/2020</span>-->
+<!--                                        <span class="time">Kết thúc: 17/07/2020</span>-->
+<!--                                    </div>-->
+<!--                                </a>-->
                             </div>
                         </div>
                     </div>

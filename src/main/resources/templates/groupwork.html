@@ -127,7 +127,7 @@
                         <h4 class="page-title">Danh sách dự án</h4>
                     </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12 text-right">
-                        <a href="groupwork-add.html" class="btn btn-sm btn-success">Thêm mới</a>
+                        <a th:href="@{/job/add}" class="btn btn-sm btn-success">Thêm mới</a>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -147,28 +147,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Phân tích dự án</td>
-                                            <td>22/05/2019</td>
-                                            <td>30/05/2019</td>
+                                        <tr th:each="listjob, stack : ${jobs}">
+                                            <td th:text="${stack.count}"></td>
+                                            <td th:text="${listjob.name}"></td>
+                                            <td th:text="${listjob.convertDateToString(listjob.startDate)}"></td>
+                                            <td th:text="${listjob.convertDateToString(listjob.endDate)}"></td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-primary">Sửa</a>
-                                                <a href="#" class="btn btn-sm btn-danger">Xóa</a>
-                                                <a href="groupwork-details.html" class="btn btn-sm btn-info">Xem</a>
+                                                <a th:href="@{/job/update/{id}(id = ${listjob.id})}" class="btn btn-sm btn-primary">Sửa</a>
+                                                <a th:href="@{/job/delete/{id}(id = ${listjob.id})}" class="btn btn-sm btn-danger">Xóa</a>
+                                                <a th:href="@{/job/look/{id}(id = ${listjob.id})}" class="btn btn-sm btn-info">Xem</a>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Thiết kế hệ thống</td>
-                                            <td>22/05/2019</td>
-                                            <td>30/05/2019</td>
-                                            <td>
-                                                <a href="#" class="btn btn-sm btn-primary">Sửa</a>
-                                                <a href="#" class="btn btn-sm btn-danger">Xóa</a>
-                                                <a href="groupwork-details.html" class="btn btn-sm btn-info">Xem</a>
-                                            </td>
-                                        </tr>
+<!--                                        <tr>-->
+<!--                                            <td>1</td>-->
+<!--                                            <td>Thiết kế hệ thống</td>-->
+<!--                                            <td>22/05/2019</td>-->
+<!--                                            <td>30/05/2019</td>-->
+<!--                                            <td>-->
+<!--                                                <a href="#" class="btn btn-sm btn-primary">Sửa</a>-->
+<!--                                                <a href="#" class="btn btn-sm btn-danger">Xóa</a>-->
+<!--                                                <a href="groupwork-details.html" class="btn btn-sm btn-info">Xem</a>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
                                     </tbody>
                                 </table>
                             </div>

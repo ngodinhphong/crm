@@ -2,6 +2,9 @@ package com.cybersoft.crm04.entity;
 
 import jakarta.persistence.*;
 
+import javax.xml.crypto.Data;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,10 +39,16 @@ public class UsersEntity {
     private String password;
 
     @Column(name = "fullname")
-    private String fullname;
+    private String fullName;
+
+    @Column(name = "username")
+    private String userName;
 
     @Column(name = "avatar")
     private String avatar;
+
+    @Column(name = "phone_no")
+    private String phoneNo;
 
 //    @Column(name = "role_id")
 //    private int roleId;
@@ -50,22 +59,6 @@ public class UsersEntity {
 
     @OneToMany(mappedBy = "usersEntity")
     private List<TasksEntity> tasks;
-
-    public RolesEntity getRolesEntity() {
-        return rolesEntity;
-    }
-
-    public void setRolesEntity(RolesEntity rolesEntity) {
-        this.rolesEntity = rolesEntity;
-    }
-
-    public List<TasksEntity> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<TasksEntity> tasks) {
-        this.tasks = tasks;
-    }
 
     public int getId() {
         return id;
@@ -91,12 +84,20 @@ public class UsersEntity {
         this.password = password;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getAvatar() {
@@ -107,9 +108,53 @@ public class UsersEntity {
         this.avatar = avatar;
     }
 
-    public String getFirstName(String fullname){
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public RolesEntity getRolesEntity() {
+        return rolesEntity;
+    }
+
+    public void setRolesEntity(RolesEntity rolesEntity) {
+        this.rolesEntity = rolesEntity;
+    }
+
+    public List<TasksEntity> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<TasksEntity> tasks) {
+        this.tasks = tasks;
+    }
+
+    public String getFirstName(String fullName){
         String firstName = "";
+
+        String[] names = fullName.split("\\s", 2);
+
+        if (names.length >= 2) {
+            firstName = names[1];
+            }
 
         return firstName;
     }
+
+    public String getLastName(String fullName){
+        String lastName = "";
+
+        String[] names = fullName.split("\\s", 2);
+
+        if (names.length >= 2) {
+            lastName = names[0];
+        }
+
+        return lastName;
+    }
+
+
 }

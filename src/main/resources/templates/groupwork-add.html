@@ -131,29 +131,31 @@
                     <div class="col-md-2 col-12"></div>
                     <div class="col-md-8 col-xs-12">
                         <div class="white-box">
-                            <form class="form-horizontal form-material">
+                            <h3 th:if="${checckIsSuccess}" style="color: red"> Thêm thành công, quay lại để xem chi tiết</h3>
+                            <h3 th:if="${checckIsSuccess == false}" style="color: red"> Email đã tồn tại, vui lòng kiểm tra lại</h3>
+                            <form class="form-horizontal form-material" th:action="@{/job/add}" method="post">
                                 <div class="form-group">
                                     <label class="col-md-12">Tên dự án</label>
                                     <div class="col-md-12">
-                                        <input type="text" placeholder="Tên công việc"
+                                        <input type="text" placeholder="Tên dự án" name="nameProject"
                                             class="form-control form-control-line"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Ngày bắt đầu</label>
                                     <div class="col-md-12">
-                                        <input type="text" placeholder="dd/MM/yyyy"
+                                        <input type="text" placeholder="dd/MM/yyyy" name="startDay"
                                             class="form-control form-control-line"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Ngày kết thúc</label>
                                     <div class="col-md-12">
-                                        <input type="text" placeholder="dd/MM/yyyy"
+                                        <input type="text" placeholder="dd/MM/yyyy" name="endtDay"
                                             class="form-control form-control-line"> </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <button type="submit" class="btn btn-success">Lưu lại</button>
-                                        <a href="groupwork.html" class="btn btn-primary">Quay lại</a>
+                                        <a th:href="@{/job/show}" class="btn btn-primary">Quay lại</a>
                                     </div>
                                 </div>
                             </form>

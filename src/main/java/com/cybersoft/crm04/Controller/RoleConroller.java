@@ -58,7 +58,7 @@ public class RoleConroller {
         return "role-table";
     }
 
-    @PostMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String removeRole(@PathVariable int id){
         roleService.deleteRole(id);
 

@@ -2,6 +2,7 @@ package com.cybersoft.crm04.entity;
 
 import jakarta.persistence.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity(name = "tasks")
@@ -87,5 +88,11 @@ public class TasksEntity {
 
     public void setStatusEntity(StatusEntity statusEntity) {
         this.statusEntity = statusEntity;
+    }
+
+    public String formatDate(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        return sdf.format(date);
     }
 }
