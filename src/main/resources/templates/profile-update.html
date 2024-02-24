@@ -36,47 +36,48 @@
     <div id="wrapper">
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top m-b-0">
-                <div class="navbar-header"> 
-                    <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse">
-                        <i class="fa fa-bars"></i>
+            <div class="navbar-header">
+                <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <div class="top-left-part">
+                    <a class="logo" href="index.html">
+                        <b>
+                            <img src="plugins/images/pixeladmin-logo.png" alt="home" />
+                        </b>
+                        <span class="hidden-xs">
+                            <img src="plugins/images/pixeladmin-text.png" alt="home" />
+                        </span>
                     </a>
-                    <div class="top-left-part">
-                        <a class="logo" href="index.html">
-                            <b>
-                                <img src="plugins/images/pixeladmin-logo.png" alt="home" />
-                            </b>
-                            <span class="hidden-xs">
-                                <img src="plugins/images/pixeladmin-text.png" alt="home" />
-                            </span>
-                        </a>
-                    </div>
-                    <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs">
-                        <li>
-                            <form role="search" class="app-search hidden-xs">
-                                <input type="text" placeholder="Search..." class="form-control"> 
-                                <a href="">
-                                    <i class="fa fa-search"></i>
-                                </a>
-                            </form>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-top-links navbar-right pull-right">
-                        <li>
-                            <div class="dropdown">
-                                <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <img src="plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle" />
-                                    <b class="hidden-xs">Cybersoft</b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a th:href="@{/user/profile}">Thông tin cá nhân</a></li>
-                                    <li><a th:href="@{/user/detail}">Thống kê công việc</a></li>
-                                    <li class="divider"></li>
-                                    <li><a th:href="@{/user/logout}">Đăng xuất</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
+                <ul class="nav navbar-top-links navbar-left m-l-20 hidden-xs">
+                    <li>
+                        <form role="search" class="app-search hidden-xs">
+                            <input type="text" placeholder="Search..." class="form-control">
+                            <a href="">
+                                <i class="fa fa-search"></i>
+                            </a>
+                        </form>
+                    </li>
+                </ul>
+                <ul class="nav navbar-top-links navbar-right pull-right">
+                    <li>
+                        <div class="dropdown">
+                            <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#">
+                                <img src="plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle" />
+                                <b class="hidden-xs">Cybersoft</b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a th:href="@{/user/profile}">Thông tin cá nhân</a></li>
+                                <li><a th:href="@{/user/detail}">Thống kê công việc</a></li>
+                                <li class="divider"></li>
+                                <li><a th:href="@{/user/logout}">Đăng xuất</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <!-- /.navbar-header -->
             <!-- /.navbar-top-links -->
             <!-- /.navbar-static-side -->
@@ -122,7 +123,7 @@
             <div class="container-fluid">
                 <div class="row bg-title">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Cập nhật thành viên</h4>
+                        <h4 class="page-title">Cập nhật công việc</h4>
                     </div>
                 </div>
                 <!-- /.row -->
@@ -130,58 +131,63 @@
                 <div class="row">
                     <div class="col-md-2 col-12"></div>
                     <div class="col-md-8 col-xs-12">
-                        <h3 th:if="${isSuccess}" style="color: #00AEEF"> Cập nhật thành công</h3>
-                        <h3 th:text="${notification}" style="color: red"></h3>
+                        <h3 th:if="${checckIsSuccess}" style="color: #00AEEF"> Cập nhât thành công, quay lại để xem chi tiết</h3>
+                        <h3 th:if="${checkConditionnal == false}" style="color: red"> Công việc đã được user đảm nhận, vui lòng xem lại</h3>
+                        <h3 th:if="${checkConditionsDate == false}" style="color: red"> Ngày của công việc phải nằm trong khoảng ngày của dự án! </h3>
                         <div class="white-box">
-                            <form th:action="@{/user/update/{id}(id = ${usersEntity.id})}" method="post" class="form-horizontal form-material">
+                            <form class="form-horizontal form-material" th:action="@{/user/profile/update/{id}(id = ${task.id})}" method="post">
                                 <div class="form-group">
-                                    <label class="col-md-12">Full Name</label>
+                                    <label class="col-md-12">Dự án</label>
                                     <div class="col-md-12">
-                                        <input type="text" name="fullName" th:value="${usersEntity.fullName}" placeholder="Johnathan Doe"
-                                            class="form-control form-control-line"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-12">User Name</label>
-                                    <div class="col-md-12">
-                                        <input type="text" name="userName" th:value="${usersEntity.userName}" placeholder="@Doe"
-                                               class="form-control form-control-line"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="example-email" class="col-md-12">Email</label>
-                                    <div class="col-md-12">
-                                        <input type="email" placeholder="johnathan@admin.com" class="form-control form-control-line"
-                                               name="email" th:value="${usersEntity.email}" id="example-email"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-12">Password</label>
-                                    <div class="col-md-12">
-                                        <input type="password" name="password" th:value="${usersEntity.password}" value="password" class="form-control form-control-line">
+                                        <select class="form-control form-control-line" name="idJob">
+                                            <option th:each="jobsEntities : ${jobs}" th:value="${jobsEntities.id}"
+                                                    th:text="${jobsEntities.name}" th:selected="${jobsEntities.id == jobsSelected}"></option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-12">Phone No</label>
+                                    <label class="col-md-12">Tên công việc</label>
                                     <div class="col-md-12">
-                                        <input type="text" name="phoneNo" th:value="${usersEntity.phoneNo}" placeholder="123 456 7890"
-                                            class="form-control form-control-line"> </div>
+                                        <input type="text" placeholder="Tên công việc" name="nameTask" th:value="${task.name}"
+                                               class="form-control form-control-line">
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-12">Select Role</label>
-                                    <div class="col-sm-12">
-                                        <select class="form-control form-control-line" name="roleId">
-                                            <option th:each="listRole : ${roleName}" th:value="${listRole.getId()}" th:text="${listRole.getName()}"
-                                                    th:selected="${listRole.id == roleNameSelect}" ></option>-->
-<!--                                            <option>London</option>-->
-<!--                                            <option>India</option>-->
-<!--                                            <option>Usa</option>-->
-<!--                                            <option>Canada</option>-->
-<!--                                            <option>Thailand</option>-->
+                                    <label class="col-md-12">Người thực hiện</label>
+                                    <div class="col-md-12">
+                                        <select class="form-control form-control-line" name="idUser">
+                                            <option th:each="usersEntities : ${users}" th:value="${usersEntities.id}"
+                                                    th:text="${usersEntities.fullName}" th:selected="${usersEntities.id == userSelected}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Ngày bắt đầu</label>
+                                    <div class="col-md-12">
+                                        <input type="text" placeholder="dd/MM/yyyy" name="startDate" th:value="${task.convertDateToString(task.startDate)}"
+                                               class="form-control form-control-line">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Ngày kết thúc</label>
+                                    <div class="col-md-12">
+                                        <input type="text" placeholder="dd/MM/yyyy" name="endDate" th:value="${task.convertDateToString(task.endDate)}"
+                                               class="form-control form-control-line">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Tình trạng thực hiện</label>
+                                    <div class="col-md-12">
+                                        <select class="form-control form-control-line" name="idStatus">
+                                            <option th:each="statusEntities : ${status}" th:value="${statusEntities.id}"
+                                                    th:text="${statusEntities.getName()}" th:selected="${statusEntities.id == statusSelected}"></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <button type="submit" class="btn btn-success">Update User</button>
-                                        <a th:href="@{/user/show}" class="btn btn-primary">Quay lại</a>
+                                        <button type="submit" class="btn btn-success">Cập nhật</button>
+                                        <a th:href="@{/user/profile}" class="btn btn-primary">Quay lại</a>
                                     </div>
                                 </div>
                             </form>

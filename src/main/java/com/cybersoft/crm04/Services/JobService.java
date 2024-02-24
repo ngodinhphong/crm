@@ -40,11 +40,6 @@ public class JobService {
         return listTask.stream().map(TasksEntity::getUsersEntity).distinct().collect(Collectors.toList());
     }
 
-    public boolean checkNameJob(String nameJob){
-        List<JobsEntity> jobsEntities = jobsRepository.findAll();
-        return jobsEntities.stream().anyMatch(jobs -> jobs.getName().equalsIgnoreCase(nameJob));
-    }
-
     public Date convertStringToDate(String dateString) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -55,15 +50,46 @@ public class JobService {
         }
     }
 
-    public boolean saveJob(String nameProject, String startDay, String endtDay) {
+    public boolean checkNameJob(String nameJob){
+        List<JobsEntity> jobsEntities = jobsRepository.findAll();
+        return jobsEntities.stream().anyMatch(jobs -> jobs.getName().equalsIgnoreCase(nameJob)) ;
+    }
+
+    public boolean checkDate(String startDate, String endDate){
+        return convertStringToDate(startDate).before(convertStringToDate(endDate));
+    }
+
+    private boolean checkForNull(String nameProject, String startDate, String endDate){
+        return nameProject != null && !nameProject.isEmpty()
+                && startDate != null && !startDate.isEmpty()
+                && endDate != null && !endDate.isEmpty();
+    }
+
+    public String notificationSave(String nameProject, String startDate, String endDate){
+        if(nameProject == null || nameProject.isEmpty()){
+            return "Vui lòng nhập tên dự án!";
+        } else if (startDate == null || startDate.isEmpty()) {
+            return "Vui lòng nhập ngày bắt đầu!";
+        }else if (endDate == null || endDate.isEmpty()) {
+            return "Vui lòng nhập ngày kết thúc!";
+        }else if (checkNameJob(nameProject)) {
+            return "Tên dự án đã tồn tại!";
+        }else if (!checkDate(startDate, endDate)) {
+            return "Ngày bắt đầu phải nhỏ hơn ngày kết thúc!";
+        } else {
+            return "";
+        }
+    }
+
+    public boolean saveJob(String nameProject, String startDate, String endDate) {
         boolean isSuccess = false;
 
         JobsEntity jobs = new JobsEntity();
         jobs.setName(nameProject);
-        jobs.setStartDate(convertStringToDate(startDay));
-        jobs.setEndDate(convertStringToDate(endtDay));
+        jobs.setStartDate(convertStringToDate(startDate));
+        jobs.setEndDate(convertStringToDate(endDate));
 
-        if (!checkNameJob(nameProject)){
+        if (checkForNull(nameProject, startDate, endDate) && !checkNameJob(nameProject) && checkDate(startDate, endDate)){
             try {
                 jobsRepository.save(jobs);
                 isSuccess = true;
@@ -81,18 +107,34 @@ public class JobService {
         jobsRepository.deleteById(id);
     }
 
-    public boolean updatejob(String nameProject, JobsEntity jobsEntity, JobsEntity job) {
+    public String notificationUpdate(String nameProject, String startDate, String endDate, JobsEntity job){
+        if(nameProject == null || nameProject.isEmpty()){
+            return "Vui lòng nhập tên dự án!";
+        } else if (startDate == null || startDate.isEmpty()) {
+            return "Vui lòng nhập ngày bắt đầu!";
+        } else if (endDate == null || endDate.isEmpty()) {
+            return "Vui lòng nhập ngày kết thúc!";
+        }else if (!checkDate(startDate, endDate)) {
+            return "Ngày bắt đầu phải nhỏ hơn ngày kết thúc!";
+        }else if (nameProject.equalsIgnoreCase(job.getName())) {
+            return "";
+        } else if (checkNameJob(nameProject)) {
+            return "Tên dự án đã tồn tại!";
+        } else {
+            return "";
+        }
+    }
+
+    public boolean updatejob(String nameProject, String startDay, String endDay, JobsEntity jobsEntity, JobsEntity job) {
         boolean isSuccess = false;
 
-        if (nameProject.equalsIgnoreCase(job.getName()) || !checkNameJob(nameProject)){
+        if (checkForNull(nameProject, startDay, endDay) && (nameProject.equalsIgnoreCase(job.getName()) || !checkNameJob(nameProject)) && checkDate(startDay, endDay)){
             try {
                 jobsRepository.save(jobsEntity);
                 isSuccess = true;
             }catch (Exception e) {
                 System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
             }
-        }else {
-            System.out.println("Email đã tồn tại");
         }
         return isSuccess;
 

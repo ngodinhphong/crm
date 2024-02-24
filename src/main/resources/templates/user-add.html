@@ -69,9 +69,9 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a href="profile.html">Thông tin cá nhân</a></li>
-                                    <li><a href="#">Thống kê công việc</a></li>
+                                    <li><a th:href="@{/user/detail}">Thống kê công việc</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="#">Đăng xuất</a></li>
+                                    <li><a th:href="@{/user/logout}">Đăng xuất</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -130,8 +130,8 @@
                 <div class="row">
                     <div class="col-md-2 col-12"></div>
                     <div class="col-md-8 col-xs-12">
-                        <h3 th:if="${isSuccess}" style="color: red"> Thêm thành công, quay lại để xem chi tiết</h3>
-                        <h3 th:if="${isSuccess == false}" style="color: red"> Email đã tồn tại, vui lòng kiểm tra lại</h3>
+                        <h3 th:if="${isSuccess}" style="color: #00AEEF"> Thêm thành công, quay lại để xem chi tiết</h3>
+                        <h3 th:text="${notification}" style="color: red"></h3>
                         <div class="white-box">
                             <form th:action="@{/user/add}" method="post" class="form-horizontal form-material">
                                 <div class="form-group">

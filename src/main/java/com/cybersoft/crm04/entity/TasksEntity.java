@@ -90,9 +90,8 @@ public class TasksEntity {
         this.statusEntity = statusEntity;
     }
 
-    public String formatDate(Date date){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-        return sdf.format(date);
+    public String convertDateToString(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return dateFormat.format(date);
     }
 }

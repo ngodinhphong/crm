@@ -42,9 +42,9 @@ public class LoginController {
     @GetMapping ("")
     public String login( HttpServletRequest request, Model model){
         String email = loginService.saveEmail(request);
-        String password = loginService.savePassword(request);
-
         model.addAttribute("email", email);
+
+        String password = loginService.savePassword(request);
         model.addAttribute("password", password);
 
         return "login";

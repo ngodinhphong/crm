@@ -129,20 +129,21 @@
                 <div class="row">
                     <div class="col-md-2 col-12"></div>
                     <div class="col-md-8 col-xs-12">
-                        <h4 th:text="${notification}" style="color: red"></h4>
+                        <h3 th:if="${checckIsSuccess}" style="color: #00AEEF"> Thêm thành công, quay lại để xem chi tiết</h3>
+                        <h3 th:text="${notification}" style="color: red"></h3>
                         <div class="white-box">
                             <form th:action="@{/role/add}" method="post" class="form-horizontal form-material">
                                 <div class="form-group">
                                     <label class="col-md-12">Tên quyền</label>
                                     <div class="col-md-12">
-                                        <input name="roleName" type="text" placeholder="Tên quyền"
+                                        <input name="roleName" type="text" placeholder="Tên quyền" th:value="${roleName}"
                                             class="form-control form-control-line" />
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-12">Mô tả</label>
                                     <div class="col-md-12">
-                                        <input name="desc" type="text" placeholder="Mô tả" class="form-control form-control-line" />
+                                        <input name="desc" th:value="${desc}" type="text" placeholder="Mô tả" class="form-control form-control-line" />
                                     </div>
                                 </div>
                                 <div class="form-group">

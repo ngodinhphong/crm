@@ -1,8 +1,8 @@
 package com.cybersoft.crm04.Controller;
 
 import com.cybersoft.crm04.Services.RoleService;
+import com.cybersoft.crm04.Services.UserService;
 import com.cybersoft.crm04.entity.RolesEntity;
-import com.cybersoft.crm04.repository.RolesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,15 +38,22 @@ public class RoleConroller {
 
     public String add(){
 
-        return "role-add.html";
+        return "role-add";
     }
 
     @PostMapping("/add")
     public String processAnd(@RequestParam String roleName, @RequestParam String desc, Model model){
 
-        roleService.insertRole(roleName,desc, model);
+        String notification = roleService.notificationSave(roleName,desc);
+        model.addAttribute("notification", notification);
 
-        return "role-add.html";
+        boolean checckIsSuccess = roleService.insertRole(roleName,desc);
+        model.addAttribute("checckIsSuccess", checckIsSuccess);
+
+        model.addAttribute("roleName", roleName);
+        model.addAttribute("desc", desc);
+
+        return "role-add";
     }
 
     // Yêu cầu lấy toàn bộ danh sách role và hển thị lên giao diện role-table.html
@@ -65,27 +72,32 @@ public class RoleConroller {
         return "redirect:/role/show";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/update/{id}")
     public String editRole(@PathVariable int id, Model model){
         RolesEntity rolesEntity = roleService.getRoleById(id);
         model.addAttribute("roleEntity", rolesEntity);
 
-        return "role-edit";
+        return "role-update";
     }
 
-    @PostMapping("/edit/{id}")
+    @PostMapping("/update/{id}")
     public String progressRole(@PathVariable int id, @RequestParam String roleName, @RequestParam String desc, Model model){
 
+        RolesEntity role = roleService.getRoleById(id);
         RolesEntity rolesEntity = new RolesEntity();
         rolesEntity.setId(id);
         rolesEntity.setName(roleName);
         rolesEntity.setDescription(desc);
 
-        roleService.updateRole(rolesEntity);
+        String notification = roleService.notificationUpdate(roleName,desc, role);
+        model.addAttribute("notification", notification);
+
+        boolean checckIsSuccess = roleService.updateRole(roleName,desc, rolesEntity, role);
+        model.addAttribute("checckIsSuccess", checckIsSuccess);
 
         model.addAttribute("roleEntity", rolesEntity);
 
-        return "role-edit";
+        return "role-update";
     }
 
 

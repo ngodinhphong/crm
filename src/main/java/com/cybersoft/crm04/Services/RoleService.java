@@ -26,23 +26,46 @@ public class RoleService {
         rolesRepository.deleteById(id);
     }
 
-    public void insertRole(String roleName, String desc, Model model) {
+    private boolean checkRoleName(String roleName) {
+        List<RolesEntity> rolesEntityList = rolesRepository.findAll();
+        return rolesEntityList.stream().anyMatch(role -> role.getName().equalsIgnoreCase(roleName));
+    }
+
+    private boolean checkForNull(String roleName, String desc){
+        return roleName != null && !roleName.isEmpty() && desc != null && !desc.isEmpty();
+    }
+
+    public String notificationSave(String roleName, String desc){
+        if(roleName == null || roleName.isEmpty()){
+            return "Vui lòng nhập tên quyền!";
+        } else if (desc == null || desc.isEmpty()) {
+            return "Vui lòng nhập mô tả!";
+        } else if (checkRoleName(roleName)) {
+            return "Tên quyền đã tồn tại!";
+        } else {
+            return "";
+        }
+    }
+
+    public boolean insertRole(String roleName, String desc) {
+        boolean isSuccess = false;
+
         RolesEntity rolesEntity = new RolesEntity();
         rolesEntity.setName(roleName);
         rolesEntity.setDescription(desc);
-        if (rolesEntity != null) {
-            model.addAttribute("notification", "Data added successfully!");
-        }
+        if (checkForNull(roleName, desc) && !checkRoleName(roleName)) {
 
-        try {
-            rolesRepository.save(rolesEntity);
-//            model.addAttribute("notification", "Add to success");
-        } catch (Exception e) {
-            // Code bên trong chỉ chạy khi các đoạn code bên trong try bị lỗi liên quan đến Runtime Error
-            System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
-            model.addAttribute("notification", "Data added failed!");
+            try {
+                rolesRepository.save(rolesEntity);
+                isSuccess = true;
+            } catch (Exception e) {
+                // Code bên trong chỉ chạy khi các đoạn code bên trong try bị lỗi liên quan đến Runtime Error
+                System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
+            }
         }
+        return isSuccess;
     }
+
 
     public RolesEntity getRoleById(int id) {
         // Optional: có hoặc không có cũng được.
@@ -58,8 +81,32 @@ public class RoleService {
         return dataRole;
     }
 
-    public void updateRole(RolesEntity rolesEntity){
-        rolesRepository.save(rolesEntity);
+    public String notificationUpdate(String roleName, String desc, RolesEntity role){
+        if(roleName == null || roleName.isEmpty()){
+            return "Vui lòng nhập tên quyền!";
+        } else if (desc == null || desc.isEmpty()) {
+            return "Vui lòng nhập mô tả!";
+        } else if (roleName.equalsIgnoreCase(role.getName())) {
+            return "";
+        } else if (checkRoleName(roleName)) {
+            return "Tên quyền đã tồn tại!";
+        } else {
+            return "";
+        }
+    }
+
+    public boolean updateRole(String roleName, String desc, RolesEntity rolesEntity, RolesEntity role){
+        boolean isSuccess = false;
+
+        if(checkForNull(roleName, desc) && (roleName.equalsIgnoreCase(role.getName()) || !checkRoleName(roleName))){
+            try {
+                rolesRepository.save(rolesEntity);
+                isSuccess = true;
+            }catch (Exception e){
+                System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
+            }
+        }
+        return isSuccess;
     }
 
 }

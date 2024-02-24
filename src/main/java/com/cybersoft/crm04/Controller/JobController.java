@@ -48,17 +48,23 @@ public class JobController {
     }
 
     @PostMapping("/add")
-    public String addJob(Model model, @RequestParam String nameProject, @RequestParam String startDay, @RequestParam String endtDay){
+    public String addJob(@RequestParam String nameProject, @RequestParam String startDate, @RequestParam String endDate, Model model){
 
-        boolean checckIsSuccess = jobService.saveJob(nameProject, startDay, endtDay);
+        String notification = jobService.notificationSave(nameProject, startDate, endDate);
+        model.addAttribute("notification", notification);
+
+        boolean checckIsSuccess = jobService.saveJob(nameProject, startDate, endDate);
         model.addAttribute("checckIsSuccess", checckIsSuccess);
+
+        model.addAttribute("nameProject", nameProject);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
         return "groupwork-add";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteJob(@PathVariable int id){
-
         jobService.deletJobById(id);
 
         return "redirect:/job/show";
@@ -73,15 +79,19 @@ public class JobController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateData(@PathVariable int id, @RequestParam String nameProject, @RequestParam String startDay, @RequestParam String endtDay, Model model){
+    public String updateData(@PathVariable int id, @RequestParam String nameProject, @RequestParam String startDate, @RequestParam String endtDate, Model model){
         JobsEntity job = jobService.getJobById(id);
 
         JobsEntity jobsEntity = new JobsEntity();
         jobsEntity.setId(id);
         jobsEntity.setName(nameProject);
-        jobsEntity.setStartDate(jobService.convertStringToDate(startDay));
-        jobsEntity.setEndDate(jobService.convertStringToDate(endtDay));
-        boolean checckIsSuccess = jobService.updatejob(nameProject, jobsEntity, job);
+        jobsEntity.setStartDate(jobService.convertStringToDate(startDate));
+        jobsEntity.setEndDate(jobService.convertStringToDate(endtDate));
+
+        String notification = jobService.notificationUpdate(nameProject, startDate, endtDate, job);
+        model.addAttribute("notification", notification);
+
+        boolean checckIsSuccess = jobService.updatejob(nameProject, startDate, endtDate, jobsEntity, job);
         model.addAttribute("checckIsSuccess", checckIsSuccess);
 
         model.addAttribute("job", job);

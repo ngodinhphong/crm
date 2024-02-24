@@ -1,7 +1,9 @@
 package com.cybersoft.crm04.config;
 
+import com.cybersoft.crm04.filter.AdminAndManageFilter;
 import com.cybersoft.crm04.filter.AuthenticationFilter;
 import com.cybersoft.crm04.filter.CustomFilter;
+import com.cybersoft.crm04.filter.PermissionFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,12 +12,24 @@ import org.springframework.context.annotation.Configuration;
 public class CustomFilterConfig {
 
     @Bean
-    public FilterRegistrationBean<CustomFilter> filterConfig(){
+    public FilterRegistrationBean<CustomFilter> CustomFilterConfig(){
 
         FilterRegistrationBean<CustomFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new CustomFilter());
-        registrationBean.addUrlPatterns("/login"); // khi người dùng gọi link là /role mới kích hoạt filter
+        registrationBean.addUrlPatterns("/login"); // khi người dùng gọi link là /login mới kích hoạt filter
         registrationBean.setOrder(1);
+
+        return registrationBean;
+
+    }
+
+    @Bean
+    public FilterRegistrationBean<PermissionFilter> filterConfig(){
+
+        FilterRegistrationBean<PermissionFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new PermissionFilter());
+        registrationBean.addUrlPatterns("/index/*", "/job/*", "/role/*", "/task/*", "/user/*"); // khi người dùng gọi link là /login mới kích hoạt filter
+        registrationBean.setOrder(2);
 
         return registrationBean;
 
@@ -26,8 +40,21 @@ public class CustomFilterConfig {
 
         FilterRegistrationBean<AuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new AuthenticationFilter());
-        registrationBean.addUrlPatterns("/role/*"); // khi người dùng gọi link là /role mới kích hoạt filter
-        registrationBean.setOrder(2);
+        registrationBean.addUrlPatterns("/role/*", "/user/add", "/user/update/*", "/user/delete/*"); // khi người dùng gọi link là /role mới kích hoạt filter
+        registrationBean.setOrder(3);
+
+        return registrationBean;
+
+    }
+
+    @Bean
+    public FilterRegistrationBean<AdminAndManageFilter> adminAndManageFilterConfig (){
+
+        FilterRegistrationBean<AdminAndManageFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new AdminAndManageFilter());
+        registrationBean.addUrlPatterns("/user/look/*", "/job/add", "/job/update/*", "/job/delete/*",
+                                        "/task/add", "/task/update/*", "/task/delete/*");
+        registrationBean.setOrder(4);
 
         return registrationBean;
 

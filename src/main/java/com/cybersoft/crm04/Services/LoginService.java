@@ -53,7 +53,7 @@ public class LoginService {
                 break;
             }
         }
-        if (listUser.size() > 0) {
+        if (!listUser.isEmpty()) {
             // có giá trị => đăng nhập thành công
 
             httpSession.setAttribute("email", email);
@@ -74,7 +74,7 @@ public class LoginService {
 
         } else {
             // Không có giá trị => đăng nhập thất bại
-            model.addAttribute("error", "Login failed");
+            model.addAttribute("error", "Đăng nhập thất bại");
 
             return "login";
         }

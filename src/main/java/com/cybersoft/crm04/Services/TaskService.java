@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -38,39 +39,82 @@ public class TaskService {
         List<TasksEntity> tasksEntities = getAllTask();
         boolean isSuccess = true;
         for (TasksEntity task : tasksEntities){
-            System.out.println("Kiểm tra name 1");
             // Kiểm tra điều kiện không thể vừa trùng tên công việc, tên user và tên dự án
-            if(task.getName().equalsIgnoreCase(name) && task.getUsersEntity().getId() == usersEntity.getId()
-                && task.getJobsEntity().getId() == jobsEntity.getId()){
-                System.out.println("Kiểm tra name 2");
+            if (task.getName().equalsIgnoreCase(name) && task.getUsersEntity().getId() == usersEntity.getId()
+                    && task.getJobsEntity().getId() == jobsEntity.getId()) {
+                isSuccess = false;
+                break;
+            }
+        }
+        return isSuccess;
+    }
+
+    public boolean checkConditionsUpdate(TasksEntity tasksEntity, String nameTask, UsersEntity usersEntity, JobsEntity jobsEntity){
+        List<TasksEntity> tasksEntities = getAllTask();
+        boolean isSuccess = true;
+        // Khi update tên công việc, tên dự án, tên user có thẻ trùng với dữ liệu đưa lên
+        if(tasksEntity.getName().equalsIgnoreCase(nameTask) && tasksEntity.getUsersEntity().getId() == usersEntity.getId()
+                && tasksEntity.getJobsEntity().getId() == jobsEntity.getId()){
+            return isSuccess;
+        }else {
+            for (TasksEntity task : tasksEntities){
+                // Kiểm tra điều kiện không thể vừa trùng tên công việc, tên user và tên dự án
+                if (task.getName().equalsIgnoreCase(nameTask) && task.getUsersEntity().getId() == usersEntity.getId()
+                        && task.getJobsEntity().getId() == jobsEntity.getId()) {
+                    isSuccess = false;
+                    break;
+                }
+            }
+        }
+
+        for (TasksEntity task : tasksEntities){
+            // Kiểm tra điều kiện không thể vừa trùng tên công việc, tên user và tên dự án
+            if(task.getName().equalsIgnoreCase(nameTask) && task.getUsersEntity().getId() == usersEntity.getId()
+                    && task.getJobsEntity().getId() == jobsEntity.getId()){
                 isSuccess = false;
             }
         }
-        System.out.println("Kiểm tra dk name " + isSuccess);
         return isSuccess;
     }
 
     public boolean checkConditionsDate(JobsEntity jobsEntity, String startDate, String endDate){
         boolean isSuccess = true;
-            //Ngày bắt đầu không thể sau ngày kết thúc
+        //Ngày bắt đầu không thể sau ngày kết thúc của dự án
         if(convertStringToDate(startDate).after(convertStringToDate(endDate))){
-            System.out.println("Kiểm tra Date 1");
-            // Ngày bắt đầu không thể bằng ngày kết thúc
+            // Ngày bắt đầu không thể bằng ngày kết thúc của dự án
         } else if (convertStringToDate(startDate) == (convertStringToDate(endDate))) {
-            System.out.println("Kiểm tra Date 2");
             isSuccess = false;
         }else {
-            System.out.println("Kiểm tra Date 3");
             // Kiểm tra điều kiện ngày bắt đầu công việc không thể nằm ngoài ngày bắt đầu dự án và ngày kết thúc dự án,
             // ngày kết thúc thì ngược lại
-            if(convertStringToDate(startDate).before(jobsEntity.getStartDate()) && convertStringToDate(startDate).after(jobsEntity.getEndDate())
-                    && convertStringToDate(endDate).after(jobsEntity.getEndDate())){
-                System.out.println("Kiểm tra Date 4");
+            if(convertStringToDate(startDate).before(jobsEntity.getStartDate()) || convertStringToDate(startDate).after(jobsEntity.getEndDate())
+                    || convertStringToDate(endDate).after(jobsEntity.getEndDate())){
                 isSuccess = false;
             }
         }
-        System.out.println("Kiểm tra dk date " + isSuccess);
         return isSuccess;
+    }
+
+    private boolean checkForNull(String nameTask, String startDate, String endDate){
+        return nameTask != null && !nameTask.isEmpty()
+                && startDate != null && !startDate.isEmpty()
+                && endDate != null && !endDate.isEmpty();
+    }
+
+    public String notificationSave(JobsEntity jobsEntity, UsersEntity usersEntity, String nameTask, String startDate, String endDate){
+        if(nameTask == null || nameTask.isEmpty()){
+            return "Vui lòng nhập tên cng việc!";
+        } else if (startDate == null || startDate.isEmpty()) {
+            return "Vui lòng nhập ngày bắt đầu!";
+        }else if (endDate == null || endDate.isEmpty()) {
+            return "Vui lòng nhập ngày kết thúc!";
+        }else if (!checkConditions(nameTask, usersEntity, jobsEntity)) {
+            return "Công việc đã được người này đảm nhận!";
+        }else if (!checkConditionsDate(jobsEntity, startDate, endDate)) {
+            return "Ngày của công việc phải nằm trong khoảng ngày của dự án!";
+        } else {
+            return "";
+        }
     }
 
     public boolean saveTask(JobsEntity jobsEntity, String nameTask, UsersEntity usersEntity, String startDate, String endDate, StatusEntity statusEntity) {
@@ -83,15 +127,58 @@ public class TaskService {
         tasksEntity.setStartDate(convertStringToDate(startDate));
         tasksEntity.setEndDate(convertStringToDate(endDate));
         tasksEntity.setStatusEntity(statusEntity);
-        System.out.println("Kiểm tra 1");
 
-        if(checkConditions(nameTask, usersEntity, jobsEntity)
+        if(checkForNull(nameTask, startDate, endDate) && checkConditions(nameTask, usersEntity, jobsEntity)
                 && checkConditionsDate(jobsEntity, startDate, endDate)){
-            System.out.println("Kiểm tra 2");
             try {
                 tasksRepositiory.save(tasksEntity);
                 isSuccess = true;
-                System.out.println("Kiểm tra 3");
+            }catch (Exception e) {
+                System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
+            }
+        }
+        return isSuccess;
+    }
+
+    public TasksEntity getTaskById(int id) {
+        TasksEntity task = null;
+        Optional<TasksEntity> usersEntity = tasksRepositiory.findById(id);
+
+        if (usersEntity.isPresent()) {
+            task = usersEntity.get();
+        }
+
+        return task;
+    }
+
+    public void deleteTassk(int id) {
+        tasksRepositiory.deleteById(id);
+    }
+
+    public String notificationUpdate(JobsEntity jobsEntity, UsersEntity usersEntity, TasksEntity tasksEntity, String nameTask, String startDate, String endDate){
+        if(nameTask == null || nameTask.isEmpty()){
+            return "Vui lòng nhập tên cng việc!";
+        } else if (startDate == null || startDate.isEmpty()) {
+            return "Vui lòng nhập ngày bắt đầu!";
+        }else if (endDate == null || endDate.isEmpty()) {
+            return "Vui lòng nhập ngày kết thúc!";
+        }else if (!checkConditionsUpdate(tasksEntity, nameTask, usersEntity, jobsEntity)) {
+            return "Công việc đã được người này đảm nhận!";
+        }else if (!checkConditionsDate(jobsEntity, startDate, endDate)) {
+            return "Ngày của công việc phải nằm trong khoảng ngày của dự án!";
+        } else {
+            return "";
+        }
+    }
+
+    public boolean updateTask(TasksEntity tasksEntity, TasksEntity task, JobsEntity jobsEntity, String nameTask, UsersEntity usersEntity, String startDate, String endDate, StatusEntity statusEntity) {
+        boolean isSuccess = false;
+
+        if(checkForNull(nameTask, startDate, endDate) && checkConditionsUpdate(tasksEntity, nameTask, usersEntity, jobsEntity)
+                && checkConditionsDate(jobsEntity, startDate, endDate)){
+            try {
+                tasksRepositiory.save(task);
+                isSuccess = true;
             }catch (Exception e) {
                 System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
             }
