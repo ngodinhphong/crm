@@ -25,6 +25,22 @@ public class IndexService {
         return quantity;
     }
 
+    public int getTaskUnfulfilledPercent(){
+        int quantity = 0;
+        List<TasksEntity> tasksEntities = tasksRepositiory.findAll();
+
+        for (TasksEntity tasks : tasksEntities){
+            if(tasks.getStatusEntity().getName().equals("Chưa thực hiện")){
+                quantity += 1;
+            }
+        }
+        if(quantity == 0){
+            return 0;
+        }else{
+            return (int)(quantity/(float)tasksEntities.size()*100);
+        }
+    }
+
     public int getTaskProcessing(){
         int quantity = 0;
         List<TasksEntity> tasksEntities = tasksRepositiory.findAll();
@@ -37,6 +53,22 @@ public class IndexService {
         return quantity;
     }
 
+    public int getTaskProcessingPercent(){
+        int quantity = 0;
+        List<TasksEntity> tasksEntities = tasksRepositiory.findAll();
+
+        for (TasksEntity tasks : tasksEntities){
+            if(tasks.getStatusEntity().getName().equals("Đang thực hiện")){
+                quantity += 1;
+            }
+        }
+        if(quantity == 0){
+            return 0;
+        }else{
+            return (int)(quantity/(float)tasksEntities.size()*100);
+        }
+    }
+
     public int getTaskCompleted(){
         int quantity = 0;
         List<TasksEntity> tasksEntities = tasksRepositiory.findAll();
@@ -47,6 +79,22 @@ public class IndexService {
             }
         }
         return quantity;
+    }
+
+    public int getTaskCompletedPercent(){
+        int quantity = 0;
+        List<TasksEntity> tasksEntities = tasksRepositiory.findAll();
+
+        for (TasksEntity tasks : tasksEntities){
+            if(tasks.getStatusEntity().getName().equals("Đã hoàn thành")){
+                quantity += 1;
+            }
+        }
+        if(quantity == 0){
+            return 0;
+        }else{
+            return (int)(quantity/(float)tasksEntities.size()*100);
+        }
     }
 
 }

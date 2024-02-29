@@ -5,6 +5,8 @@ import com.cybersoft.crm04.Services.UserService;
 import com.cybersoft.crm04.entity.JobsEntity;
 import com.cybersoft.crm04.entity.TasksEntity;
 import com.cybersoft.crm04.entity.UsersEntity;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,20 +25,35 @@ public class JobController {
     private UserService userService;
 
     @GetMapping("show")
-    public String designate(Model model){
-        List<JobsEntity> listjob = jobService.getAlljob();
+    public String designate(Model model, HttpSession session){
+        List<JobsEntity> listjob = jobService.getJobByRole(session);
+
         model.addAttribute("jobs", listjob);
         return "groupwork";
     }
 
     @GetMapping("/look/{id}")
-    public String showJobs(@PathVariable int id, Model model){
+    public String showJobs(@PathVariable int id, Model model, HttpSession session){
         JobsEntity job = jobService.getJobById(id);
+
+        UsersEntity users = userService.getUserBySession(session);
 
         List<TasksEntity> listTask = job.getTasks();
 
         List<UsersEntity> listUser = jobService.getUserByTask(listTask);
         model.addAttribute("listUsers", listUser);
+
+        int quantityUnfulfilled = jobService.getTaskUnfulfilled(job);
+        model.addAttribute("quantityUnfulfilled", quantityUnfulfilled);
+
+        int quantityProcessing = jobService.getTaskProcessing(job);
+        model.addAttribute("quantityProcessing", quantityProcessing);
+
+        int quantityCompleted = jobService.getTaskCompleted(job);
+        model.addAttribute("quantityCompleted", quantityCompleted);
+
+        String currentTime = jobService.getCurrentTime();
+        model.addAttribute("currentTime", currentTime);
 
         return "groupwork-details";
     }
@@ -64,16 +81,23 @@ public class JobController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteJob(@PathVariable int id){
+    public String deleteJob(@PathVariable int id, HttpSession session){
+
+        JobsEntity job = jobService.getJobById(id);
+
+        UsersEntity users = userService.getUserBySession(session);
+
         jobService.deletJobById(id);
 
-        return "redirect:/job/show";
+        return "redirect:/job/show" ;
     }
 
     @GetMapping("/update/{id}")
-    public String getData(@PathVariable int id, Model model){
+    public String getData(@PathVariable int id, HttpSession session, Model model){
         JobsEntity job = jobService.getJobById(id);
         model.addAttribute("job", job);
+
+        UsersEntity users = userService.getUserBySession(session);
 
         return "groupwork-update";
     }

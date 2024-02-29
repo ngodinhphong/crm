@@ -16,6 +16,9 @@ public class TasksEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "start_date")
     private Date startDate;
 
@@ -49,6 +52,10 @@ public class TasksEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getDescription() {return description;}
+
+    public void setDescription(String description) {this.description = description;}
 
     public Date getStartDate() {
         return startDate;

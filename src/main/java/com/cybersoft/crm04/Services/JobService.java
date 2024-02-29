@@ -4,12 +4,17 @@ import com.cybersoft.crm04.entity.JobsEntity;
 import com.cybersoft.crm04.entity.TasksEntity;
 import com.cybersoft.crm04.entity.UsersEntity;
 import com.cybersoft.crm04.repository.JobsRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.net.http.HttpRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,12 +24,31 @@ public class JobService {
     @Autowired
     private JobsRepository jobsRepository;
 
+    @Autowired
+    private UserService userService;
 
-    public List<JobsEntity> getAlljob() {
+    public List<JobsEntity> getAllJob(){
         return jobsRepository.findAll();
-
     }
 
+    public List<JobsEntity> getJobByRole(HttpSession session) {
+        List<JobsEntity> jobs = new ArrayList<>(List.of());
+        UsersEntity users = userService.getUserBySession(session);
+        if(users.getRolesEntity().getName().equals("ROLE_ADMIN")){
+            return jobsRepository.findAll();
+        } else {
+            List<TasksEntity> tasksEntities = users.getTasks();
+            tasksEntities.forEach(item -> jobs.add(item.getJobsEntity()));
+        }
+        return jobs.stream().distinct().collect(Collectors.toList());
+    }
+
+    public List<JobsEntity> getJobForUpdate(HttpSession session,TasksEntity tasksEntity){
+        UsersEntity users = userService.getUserBySession(session);
+        if(users.getRolesEntity().getName().equals("ROLE_USER")){
+            return Collections.singletonList(tasksEntity.getJobsEntity());
+        }else return getJobByRole(session);
+    }
     public JobsEntity getJobById(int id) {
         JobsEntity datajobs = null;
         Optional<JobsEntity> jobsEntity = jobsRepository.findById(id);
@@ -103,8 +127,8 @@ public class JobService {
     }
 
     public void deletJobById(int id) {
-
         jobsRepository.deleteById(id);
+
     }
 
     public String notificationUpdate(String nameProject, String startDate, String endDate, JobsEntity job){
@@ -138,5 +162,56 @@ public class JobService {
         }
         return isSuccess;
 
+    }
+
+    public int getTaskUnfulfilled(JobsEntity job) {
+        List<TasksEntity> tasksEntities = job.getTasks();
+        float quantity = 0;
+        for (TasksEntity tasks : tasksEntities){
+            if(tasks.getStatusEntity().getName().equals("Chưa thực hiện")){
+                quantity += 1;
+            }
+        }
+        if(quantity == 0){
+            return 0;
+        }else{
+            return (int)(quantity/(float)tasksEntities.size()*100);
+        }
+    }
+
+    public int getTaskProcessing(JobsEntity job) {
+        List<TasksEntity> tasksEntities = job.getTasks();
+        float quantity = 0;
+        for (TasksEntity tasks : tasksEntities){
+            if(tasks.getStatusEntity().getName().equals("Đang thực hiện")){
+                quantity += 1;
+            }
+        }
+        if(quantity == 0){
+            return 0;
+        }else{
+            return (int)(quantity/(float)tasksEntities.size()*100);
+        }
+    }
+
+    public int getTaskCompleted(JobsEntity job) {
+        List<TasksEntity> tasksEntities = job.getTasks();
+        float quantity = 0;
+        for (TasksEntity tasks : tasksEntities){
+            if(tasks.getStatusEntity().getName().equals("Đã hoàn thành")){
+                quantity += 1;
+            }
+        }
+        if(quantity == 0){
+            return 0;
+        }else{
+            return (int)(quantity/(float)tasksEntities.size()*100);
+        }
+    }
+    public String getCurrentTime() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedTime = currentTime.format(formatter);
+        return formattedTime ;
     }
 }

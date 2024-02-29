@@ -1,5 +1,6 @@
 package com.cybersoft.crm04.Services;
 
+import com.cybersoft.crm04.entity.JobsEntity;
 import com.cybersoft.crm04.entity.RolesEntity;
 import com.cybersoft.crm04.entity.TasksEntity;
 import com.cybersoft.crm04.entity.UsersEntity;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,13 @@ public class UserService {
 
     public List<UsersEntity> getAllUser(){
         return usersRepository.findAll();
+    }
+
+    public List<UsersEntity> getUserForUpdate(HttpSession session){
+        UsersEntity users = getUserBySession(session);
+        if(users.getRolesEntity().getName().equals("ROLE_USER")){
+            return Collections.singletonList(users);
+        }else return usersRepository.findAll();
     }
 
     public UsersEntity getUserById(int id){
@@ -202,7 +211,6 @@ public class UserService {
         if(session != null && session.getAttribute("email")!= null && !session.getAttribute("email").equals("")){
             email = (String) session.getAttribute("email");
             usersEntity = usersRepository.getByEmail(email);
-            System.out.println("Kiêm tra " + email);
         } else {
             System.out.println("Không thấy email");
         }
@@ -216,4 +224,6 @@ public class UserService {
         }
 
     }
+
+
 }

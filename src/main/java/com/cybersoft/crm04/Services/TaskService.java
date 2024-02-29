@@ -5,15 +5,19 @@ import com.cybersoft.crm04.entity.StatusEntity;
 import com.cybersoft.crm04.entity.TasksEntity;
 import com.cybersoft.crm04.entity.UsersEntity;
 import com.cybersoft.crm04.repository.TasksRepositiory;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -21,8 +25,30 @@ public class TaskService {
     @Autowired
     private TasksRepositiory tasksRepositiory;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JobService jobService;
+
     public List<TasksEntity> getAllTask() {
         return tasksRepositiory.findAll();
+    }
+
+    public List<TasksEntity> getTaskByRole(HttpSession session) {
+        List<TasksEntity> tasks = new ArrayList<>(List.of());
+        UsersEntity users = userService.getUserBySession(session);
+        if(users.getRolesEntity().getName().equals("ROLE_ADMIN")){
+            return tasksRepositiory.findAll();
+        } else if(users.getRolesEntity().getName().equals("ROLE_MANAGE")) {
+            List<TasksEntity> tasksEntities = tasksRepositiory.findAll();
+            List<JobsEntity> jobs = jobService.getJobByRole(session);
+            tasks = tasksEntities.stream().filter(task -> jobs.stream().anyMatch(job -> task.getJobsEntity().getName().equals(job.getName()))).toList();
+        } else {
+            tasks = users.getTasks();
+        }
+
+        return tasks;
     }
 
     public Date convertStringToDate(String dateString) {
@@ -95,40 +121,44 @@ public class TaskService {
         return isSuccess;
     }
 
-    private boolean checkForNull(String nameTask, String startDate, String endDate){
+    private boolean checkForNull(String nameTask, String startDate, String endDate, String description){
         return nameTask != null && !nameTask.isEmpty()
                 && startDate != null && !startDate.isEmpty()
-                && endDate != null && !endDate.isEmpty();
+                && endDate != null && !endDate.isEmpty()
+                && description != null && !description.isEmpty();
     }
 
-    public String notificationSave(JobsEntity jobsEntity, UsersEntity usersEntity, String nameTask, String startDate, String endDate){
+    public String notificationSave(JobsEntity jobsEntity, UsersEntity usersEntity, String nameTask, String startDate, String endDate, String description){
         if(nameTask == null || nameTask.isEmpty()){
             return "Vui lòng nhập tên cng việc!";
         } else if (startDate == null || startDate.isEmpty()) {
             return "Vui lòng nhập ngày bắt đầu!";
-        }else if (endDate == null || endDate.isEmpty()) {
+        } else if (description == null || description.isEmpty()) {
+            return "Vui lòng nhập mô tả công việc!";
+        } else if (endDate == null || endDate.isEmpty()) {
             return "Vui lòng nhập ngày kết thúc!";
-        }else if (!checkConditions(nameTask, usersEntity, jobsEntity)) {
+        } else if (!checkConditions(nameTask, usersEntity, jobsEntity)) {
             return "Công việc đã được người này đảm nhận!";
-        }else if (!checkConditionsDate(jobsEntity, startDate, endDate)) {
+        } else if (!checkConditionsDate(jobsEntity, startDate, endDate)) {
             return "Ngày của công việc phải nằm trong khoảng ngày của dự án!";
         } else {
             return "";
         }
     }
 
-    public boolean saveTask(JobsEntity jobsEntity, String nameTask, UsersEntity usersEntity, String startDate, String endDate, StatusEntity statusEntity) {
+    public boolean saveTask(JobsEntity jobsEntity, String nameTask, UsersEntity usersEntity, String startDate, String endDate, StatusEntity statusEntity, String description) {
         boolean isSuccess = false;
 
         TasksEntity tasksEntity = new TasksEntity();
         tasksEntity.setJobsEntity(jobsEntity);
         tasksEntity.setName(nameTask);
+        tasksEntity.setDescription(description);
         tasksEntity.setUsersEntity(usersEntity);
         tasksEntity.setStartDate(convertStringToDate(startDate));
         tasksEntity.setEndDate(convertStringToDate(endDate));
         tasksEntity.setStatusEntity(statusEntity);
 
-        if(checkForNull(nameTask, startDate, endDate) && checkConditions(nameTask, usersEntity, jobsEntity)
+        if(checkForNull(nameTask, startDate, endDate, description) && checkConditions(nameTask, usersEntity, jobsEntity)
                 && checkConditionsDate(jobsEntity, startDate, endDate)){
             try {
                 tasksRepositiory.save(tasksEntity);
@@ -155,26 +185,28 @@ public class TaskService {
         tasksRepositiory.deleteById(id);
     }
 
-    public String notificationUpdate(JobsEntity jobsEntity, UsersEntity usersEntity, TasksEntity tasksEntity, String nameTask, String startDate, String endDate){
+    public String notificationUpdate(JobsEntity jobsEntity, UsersEntity usersEntity, TasksEntity tasksEntity, String nameTask , String description, String startDate, String endDate){
         if(nameTask == null || nameTask.isEmpty()){
             return "Vui lòng nhập tên cng việc!";
         } else if (startDate == null || startDate.isEmpty()) {
             return "Vui lòng nhập ngày bắt đầu!";
-        }else if (endDate == null || endDate.isEmpty()) {
+        } else if (description == null || description.isEmpty()) {
+            return "Vui lòng nhập mô tả công việc!";
+        } else if (endDate == null || endDate.isEmpty()) {
             return "Vui lòng nhập ngày kết thúc!";
-        }else if (!checkConditionsUpdate(tasksEntity, nameTask, usersEntity, jobsEntity)) {
+        } else if (!checkConditionsUpdate(tasksEntity, nameTask, usersEntity, jobsEntity)) {
             return "Công việc đã được người này đảm nhận!";
-        }else if (!checkConditionsDate(jobsEntity, startDate, endDate)) {
+        } else if (!checkConditionsDate(jobsEntity, startDate, endDate)) {
             return "Ngày của công việc phải nằm trong khoảng ngày của dự án!";
         } else {
             return "";
         }
     }
 
-    public boolean updateTask(TasksEntity tasksEntity, TasksEntity task, JobsEntity jobsEntity, String nameTask, UsersEntity usersEntity, String startDate, String endDate, StatusEntity statusEntity) {
+    public boolean updateTask(TasksEntity tasksEntity, TasksEntity task, JobsEntity jobsEntity, String nameTask, UsersEntity usersEntity, String startDate, String endDate, String description) {
         boolean isSuccess = false;
 
-        if(checkForNull(nameTask, startDate, endDate) && checkConditionsUpdate(tasksEntity, nameTask, usersEntity, jobsEntity)
+        if(checkForNull(nameTask, startDate, endDate, description) && checkConditionsUpdate(tasksEntity, nameTask, usersEntity, jobsEntity)
                 && checkConditionsDate(jobsEntity, startDate, endDate)){
             try {
                 tasksRepositiory.save(task);

@@ -174,16 +174,16 @@ public class UserController {
     }
 
     @GetMapping("/profile/update/{id}")
-    public String showProfileUpdate(@PathVariable int id, Model model){
+    public String showProfileUpdate(@PathVariable int id, HttpSession session, Model model){
 
         TasksEntity tasksEntity = taskService.getTaskById(id);
         model.addAttribute("task", tasksEntity);
 
-        List<JobsEntity> jobsEntities = jobService.getAlljob();
+        List<JobsEntity> jobsEntities = jobService.getJobForUpdate(session,tasksEntity);
         model.addAttribute("jobs", jobsEntities);
         model.addAttribute("jobsSelected", tasksEntity.getJobsEntity().getId());
 
-        List<UsersEntity> usersEntities = userService.getAllUser();
+        List<UsersEntity> usersEntities = userService.getUserForUpdate(session);
         model.addAttribute("users", usersEntities);
         model.addAttribute("userSelected", tasksEntity.getUsersEntity().getId());
 
@@ -195,9 +195,9 @@ public class UserController {
     }
 
     @PostMapping("/profile/update/{id}")
-    public String updateProfile(@PathVariable int id, @RequestParam int idJob,@RequestParam String nameTask,
+    public String updateProfile(@PathVariable int id, @RequestParam int idJob, @RequestParam String nameTask ,@RequestParam String description,
                            @RequestParam int idUser, @RequestParam String startDate, @RequestParam String endDate,
-                           @RequestParam int idStatus, Model model ){
+                           @RequestParam int idStatus, HttpSession session, Model model ){
         TasksEntity tasksEntity = taskService.getTaskById(id);
         JobsEntity jobsEntity = jobService.getJobById(idJob);
         UsersEntity usersEntity = userService.getUserById(idUser);
@@ -206,6 +206,7 @@ public class UserController {
         TasksEntity task = new TasksEntity();
         task.setId(id);
         task.setName(nameTask);
+        task.setDescription(description);
         task.setJobsEntity(jobsEntity);
         task.setUsersEntity(usersEntity);
         task.setStartDate(taskService.convertStringToDate(startDate));
@@ -218,16 +219,16 @@ public class UserController {
         boolean checkConditionsDate = taskService.checkConditionsDate(jobsEntity, startDate, endDate);
         model.addAttribute("checkConditionsDate", checkConditionsDate);
 
-        boolean checckIsSuccess = taskService.updateTask(tasksEntity, task, jobsEntity, nameTask, usersEntity, startDate, endDate, statusEntity);
+        boolean checckIsSuccess = taskService.updateTask(tasksEntity, task, jobsEntity, nameTask, usersEntity, startDate, endDate, description);
         model.addAttribute("checckIsSuccess", checckIsSuccess);
 
         model.addAttribute("task", tasksEntity);
 
-        List<JobsEntity> jobsEntities = jobService.getAlljob();
+        List<JobsEntity> jobsEntities = jobService.getJobForUpdate(session,tasksEntity);
         model.addAttribute("jobs", jobsEntities);
         model.addAttribute("jobsSelected", tasksEntity.getJobsEntity().getId());
 
-        List<UsersEntity> usersEntities = userService.getAllUser();
+        List<UsersEntity> usersEntities = userService.getUserForUpdate(session);
         model.addAttribute("users", usersEntities);
         model.addAttribute("userSelected", tasksEntity.getUsersEntity().getId());
 
