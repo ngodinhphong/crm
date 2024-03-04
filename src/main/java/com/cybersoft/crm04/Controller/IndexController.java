@@ -27,6 +27,9 @@ public class IndexController {
         UsersEntity user = userService.getUserBySession(session);
         model.addAttribute("img", user.getAvatar());
 
+        String avatarPath = userService.getPathAvata(user);
+        model.addAttribute("avatarPath",avatarPath);
+
         int unfulfilled = indexService.getTaskUnfulfilled();
         model.addAttribute("unfulfilled", unfulfilled);
 

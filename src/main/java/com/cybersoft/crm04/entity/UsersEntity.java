@@ -45,7 +45,7 @@ public class UsersEntity {
     private String userName;
 
     @Column(name = "avatar")
-    private byte[] avatar;
+    private String avatar;
 
     @Column(name = "phone_no")
     private String phoneNo;
@@ -100,11 +100,11 @@ public class UsersEntity {
         this.userName = userName;
     }
 
-    public byte[] getAvatar() {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 

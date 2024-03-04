@@ -26,6 +26,11 @@ public class JobController {
 
     @GetMapping("show")
     public String designate(Model model, HttpSession session){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
+
         List<JobsEntity> listjob = jobService.getJobByRole(session);
 
         model.addAttribute("jobs", listjob);
@@ -34,9 +39,12 @@ public class JobController {
 
     @GetMapping("/look/{id}")
     public String showJobs(@PathVariable int id, Model model, HttpSession session){
+
         JobsEntity job = jobService.getJobById(id);
 
         UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
 
         List<TasksEntity> listTask = job.getTasks();
 
@@ -59,13 +67,22 @@ public class JobController {
     }
 
     @GetMapping("/add")
-    public String showAddJob(Model model){
+    public String showAddJob(HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
 
         return "groupwork-add";
     }
 
     @PostMapping("/add")
-    public String addJob(@RequestParam String nameProject, @RequestParam String startDate, @RequestParam String endDate, Model model){
+    public String addJob(@RequestParam String nameProject, @RequestParam String startDate,
+                         @RequestParam String endDate, HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
 
         String notification = jobService.notificationSave(nameProject, startDate, endDate);
         model.addAttribute("notification", notification);
@@ -81,11 +98,9 @@ public class JobController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteJob(@PathVariable int id, HttpSession session){
+    public String deleteJob(@PathVariable int id){
 
         JobsEntity job = jobService.getJobById(id);
-
-        UsersEntity users = userService.getUserBySession(session);
 
         jobService.deletJobById(id);
 
@@ -94,16 +109,26 @@ public class JobController {
 
     @GetMapping("/update/{id}")
     public String getData(@PathVariable int id, HttpSession session, Model model){
+
         JobsEntity job = jobService.getJobById(id);
         model.addAttribute("job", job);
 
         UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
 
         return "groupwork-update";
     }
 
     @PostMapping("/update/{id}")
-    public String updateData(@PathVariable int id, @RequestParam String nameProject, @RequestParam String startDate, @RequestParam String endtDate, Model model){
+    public String updateData(@PathVariable int id, @RequestParam String nameProject,
+                             @RequestParam String startDate, @RequestParam String endtDate,
+                             HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
+
         JobsEntity job = jobService.getJobById(id);
 
         JobsEntity jobsEntity = new JobsEntity();

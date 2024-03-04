@@ -75,7 +75,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li>
                     <div class="dropdown">
                         <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#">
-                            <img src="plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle" />
+                            <img th:src="${avatarPath}" alt="user-img" width="36" class="img-circle" />
                             <b class="hidden-xs">Cybersoft</b>
                         </a>
                         <ul class="dropdown-menu">
@@ -219,7 +219,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="row" th:each="user : ${listUsers}">
                 <div class="col-xs-12">
                     <a href="#" class="group-title">
-                        <img width="30" src="plugins/images/users/pawandeep.jpg" class="img-circle"/>
+                        <span>
+                            <img th:if="${user.getAvatar() == null}" width="30" src="\plugins\images\users\avatar-vo-danh.jpg" class="img-circle"/>
+                            <img th:else width="30" th:src="${user.getAvatar()}" class="img-circle"/>
+                        </span>
                         <span th:text="${user.fullName}"></span>
                     </a>
                 </div>

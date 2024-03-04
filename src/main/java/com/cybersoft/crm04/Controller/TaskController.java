@@ -35,6 +35,10 @@ public class TaskController {
     @GetMapping("/show")
     public String designate(Model model, HttpSession session){
 
+        UsersEntity user = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(user);
+        model.addAttribute("avatarPath",avatarPath);
+
         List<TasksEntity> tasks = taskService.getTaskByRole(session);
         model.addAttribute("task", tasks);
 
@@ -46,6 +50,11 @@ public class TaskController {
 
     @GetMapping("/add")
     public String ShowAddTassk(Model model, HttpSession session){
+
+        UsersEntity user= userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(user);
+        model.addAttribute("avatarPath",avatarPath);
+
         List<JobsEntity> jobs = jobService.getJobByRole(session);
         model.addAttribute("job", jobs);
 
@@ -59,8 +68,15 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public String addTask(@RequestParam int idJob, @RequestParam String nameTask, @RequestParam String description, @RequestParam int idUser,
-                          @RequestParam String startDate, @RequestParam String endDate, @RequestParam int idStatus, HttpSession session, Model model){
+    public String addTask(@RequestParam int idJob, @RequestParam String nameTask,
+                          @RequestParam String description, @RequestParam int idUser,
+                          @RequestParam String startDate, @RequestParam String endDate,
+                          @RequestParam int idStatus, HttpSession session, Model model){
+
+        UsersEntity user = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(user);
+        model.addAttribute("avatarPath",avatarPath);
+
         JobsEntity jobsEntity = jobService.getJobById(idJob);
         UsersEntity usersEntity = userService.getUserById(idUser);
         StatusEntity statusEntity = statusService.getStatusById(idStatus);
@@ -89,13 +105,18 @@ public class TaskController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteTask(@PathVariable int id){
+    public String deleteTask(@PathVariable int id, HttpSession session, Model model){
         taskService.deleteTassk(id);
-        return "redirect: /task/show";
+        return "redirect:/task/show";
     }
 
     @GetMapping("/update/{id}")
     public String editUser(@PathVariable int id, HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
+
         TasksEntity tasksEntity = taskService.getTaskById(id);
         model.addAttribute("task", tasksEntity);
 
@@ -115,9 +136,16 @@ public class TaskController {
     }
 
     @PostMapping("/update/{id}")
-    public String editTask(@PathVariable int id, @RequestParam int idJob, @RequestParam String nameTask, @RequestParam String description,
-                           @RequestParam int idUser, @RequestParam String startDate, @RequestParam String endDate,
-                           @RequestParam int idStatus, HttpSession session, Model model ){
+    public String editTask(@PathVariable int id, @RequestParam int idJob,
+                           @RequestParam String nameTask, @RequestParam String description,
+                           @RequestParam int idUser, @RequestParam String startDate,
+                           @RequestParam String endDate, @RequestParam int idStatus,
+                           HttpSession session, Model model ){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
+
         TasksEntity tasksEntity = taskService.getTaskById(id);
         JobsEntity jobsEntity = jobService.getJobById(idJob);
         UsersEntity usersEntity = userService.getUserById(idUser);

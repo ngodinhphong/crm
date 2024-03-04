@@ -69,13 +69,8 @@
                     <li>
                         <div class="dropdown">
                             <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#">
-<!--                                plugins/images/users/varun.jpg-->
-                                <span >
-                                    <img th:if="${img != null}" th:src="${'data:image/jpeg;base64,' + #strings.bytesToBase64(img)}" alt="user-img" width="36" class="img-circle" />
-                                    <img th:if="${img == null}" src="plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle" />
-                                </span>
-
-                                <b class="hidden-xs">Cybersoft</b> 
+                                <img th:src="${avatarPath}" alt="user-img" width="36" class="img-circle" />
+                                <b class="hidden-xs">Cybersoft</b>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a th:href="@{/user/profile}">Thông tin cá nhân</a></li>

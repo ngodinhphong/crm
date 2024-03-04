@@ -64,7 +64,7 @@
                         <li>
                             <div class="dropdown">
                                 <a class="profile-pic dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <img src="plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle" />
+                                    <img th:src="${avatarPath}" alt="user-img" width="36" class="img-circle" />
                                     <b class="hidden-xs">Cybersoft</b>
                                 </a>
                                 <ul class="dropdown-menu">
@@ -133,7 +133,7 @@
                         <h3 th:if="${isSuccess}" style="color: #00AEEF"> Cập nhật thành công</h3>
                         <h3 th:text="${notification}" style="color: red"></h3>
                         <div class="white-box">
-                            <form th:action="@{/user/update/{id}(id = ${usersEntity.id})}" method="post" class="form-horizontal form-material">
+                            <form th:action="@{/user/update/{id}(id = ${usersEntity.id})}" method="post" enctype="multipart/form-data" class="form-horizontal form-material">
                                 <div class="form-group">
                                     <label class="col-md-12">Full Name</label>
                                     <div class="col-md-12">
@@ -144,6 +144,12 @@
                                     <label class="col-md-12">User Name</label>
                                     <div class="col-md-12">
                                         <input type="text" name="userName" th:value="${usersEntity.userName}" placeholder="@Doe"
+                                               class="form-control form-control-line"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Avata</label>
+                                    <div class="col-md-12">
+                                        <input type="file" name="fileImage" value="upload"
                                                class="form-control form-control-line"></div>
                                 </div>
                                 <div class="form-group">

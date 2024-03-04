@@ -3,6 +3,8 @@ package com.cybersoft.crm04.Controller;
 import com.cybersoft.crm04.Services.RoleService;
 import com.cybersoft.crm04.Services.UserService;
 import com.cybersoft.crm04.entity.RolesEntity;
+import com.cybersoft.crm04.entity.UsersEntity;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,15 +36,24 @@ public class RoleConroller {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/add")
+    public String add(HttpSession session, Model model){
 
-    public String add(){
-
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
         return "role-add";
     }
 
     @PostMapping("/add")
-    public String processAnd(@RequestParam String roleName, @RequestParam String desc, Model model){
+    public String processAnd(@RequestParam String roleName, @RequestParam String desc, HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
 
         String notification = roleService.notificationSave(roleName,desc);
         model.addAttribute("notification", notification);
@@ -58,7 +69,12 @@ public class RoleConroller {
 
     // Yêu cầu lấy toàn bộ danh sách role và hển thị lên giao diện role-table.html
     @GetMapping("/show")
-    public String showRole(Model model){
+    public String showRole(HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
+
         List<RolesEntity> listRole = roleService.getAllRole();
         model.addAttribute("roles", listRole);
 
@@ -67,13 +83,19 @@ public class RoleConroller {
 
     @GetMapping("/delete/{id}")
     public String removeRole(@PathVariable int id){
+
         roleService.deleteRole(id);
 
         return "redirect:/role/show";
     }
 
     @GetMapping("/update/{id}")
-    public String editRole(@PathVariable int id, Model model){
+    public String editRole(@PathVariable int id, HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
+
         RolesEntity rolesEntity = roleService.getRoleById(id);
         model.addAttribute("roleEntity", rolesEntity);
 
@@ -81,7 +103,12 @@ public class RoleConroller {
     }
 
     @PostMapping("/update/{id}")
-    public String progressRole(@PathVariable int id, @RequestParam String roleName, @RequestParam String desc, Model model){
+    public String progressRole(@PathVariable int id, @RequestParam String roleName,
+                               @RequestParam String desc, HttpSession session, Model model){
+
+        UsersEntity users = userService.getUserBySession(session);
+        String avatarPath = userService.getPathAvata(users);
+        model.addAttribute("avatarPath",avatarPath);
 
         RolesEntity role = roleService.getRoleById(id);
         RolesEntity rolesEntity = new RolesEntity();

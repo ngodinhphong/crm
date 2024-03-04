@@ -28,7 +28,7 @@ public class CustomFilterConfig {
 
         FilterRegistrationBean<PermissionFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new PermissionFilter());
-        registrationBean.addUrlPatterns("/index/*", "/job/*", "/role/*", "/task/*", "/user/*"); // khi người dùng gọi link là /login mới kích hoạt filter
+        registrationBean.addUrlPatterns("/index", "/job/*", "/role/*", "/task/*", "/user/*"); // khi người dùng gọi link là /login mới kích hoạt filter
         registrationBean.setOrder(2);
 
         return registrationBean;

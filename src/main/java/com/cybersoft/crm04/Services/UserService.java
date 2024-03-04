@@ -9,8 +9,13 @@ import com.cybersoft.crm04.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -151,23 +156,50 @@ public class UserService {
         }
     }
 
-    public boolean saveUsser(String fullName, String userName, String email, String password, String phoneNo, RolesEntity role) {
-        boolean isSuccess = false;
+    @Value("${upload.path.user}")
+    private String uploadPathUser;
+    @Value("${upload.path.large}")
+    private String uploadPathLarge;
 
-        UsersEntity usersEntity = new UsersEntity();
-        usersEntity.setFullName(fullName);
-        usersEntity.setUserName(userName);
-        usersEntity.setEmail(email);
-        usersEntity.setPassword(password);
-        usersEntity.setPhoneNo(phoneNo);
-        usersEntity.setRolesEntity(role);
-        if (checkForNull(fullName, userName, email, password, phoneNo) && !CheckEmailExists(email)){
-            try {
-                usersRepository.save(usersEntity);
-                isSuccess = true;
-            }catch (Exception e) {
-                System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
+    public String getPathAvatar(MultipartFile file){
+        String newPath = null;
+        try {
+            byte[] bytes = file.getBytes();
+            Path pathUser = Paths.get(uploadPathUser + file.getOriginalFilename());
+            Files.write(pathUser, bytes);
+            System.out.println("Check pathUser:" + pathUser.toString() + " " + Files.write(pathUser, bytes));
+            Path pathLarge = Paths.get(uploadPathLarge + file.getOriginalFilename());
+            Files.write(pathLarge, bytes);
+            String originalPath = pathUser.toString();
+            newPath = originalPath.replace("src\\main\\resources\\static\\", "");
+            System.out.println("Check : " + newPath);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return newPath;
+    }
+
+    public boolean saveUsser(String fullName, String userName, String email, String password, String phoneNo, RolesEntity role, MultipartFile file) {
+        boolean isSuccess = false;
+        try {
+
+            String newPath = getPathAvatar(file);
+            UsersEntity usersEntity = new UsersEntity();
+            usersEntity.setFullName(fullName);
+            usersEntity.setUserName(userName);
+            usersEntity.setAvatar(newPath);
+            usersEntity.setEmail(email);
+            usersEntity.setPassword(password);
+            usersEntity.setPhoneNo(phoneNo);
+            usersEntity.setRolesEntity(role);
+            if (checkForNull(fullName, userName, email, password, phoneNo) && !CheckEmailExists(email)){
+                    usersRepository.save(usersEntity);
+                    isSuccess = true;
+            }else {
+                System.out.println("thêm thất bại!");
             }
+        }catch (Exception e) {
+            System.out.println("Lỗi Thêm dữ lệu" + e.getMessage());
         }
         return isSuccess;
     }
@@ -222,8 +254,13 @@ public class UserService {
         if (session != null) {
             session.invalidate();
         }
-
     }
 
+    public String getPathAvata(UsersEntity users){
+        String avatarPath = users.getAvatar();
+        if(avatarPath != null){
+            return avatarPath;
+        } else return "plugins/images/users/avatar-vo-danh.jpg";
+    }
 
 }
