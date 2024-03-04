@@ -123,7 +123,7 @@ public class UserController {
         usersEntity.setId(id);
         usersEntity.setFullName(fullName);
         usersEntity.setUserName(userName);
-        usersEntity.setAvatar(pathAvatar);
+        usersEntity.setAvatar((pathAvatar == null) ? user.getAvatar() : pathAvatar);
         usersEntity.setEmail(email);
         usersEntity.setPassword(password);
         usersEntity.setPhoneNo(phoneNo);

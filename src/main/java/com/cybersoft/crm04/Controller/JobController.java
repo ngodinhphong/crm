@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("job")
+@RequestMapping("/job")
 public class JobController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class JobController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("show")
+    @GetMapping("/show")
     public String designate(Model model, HttpSession session){
 
         UsersEntity users = userService.getUserBySession(session);
